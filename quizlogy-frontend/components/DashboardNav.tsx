@@ -146,77 +146,11 @@ export const DashboardNav = () => {
             </svg>
             </button>
 
-            {/* Logo */}
-            {/* <div className="w-12 h-12 border-white flex items-center justify-center -hidden">
-              <button onClick={() => {
-                window.location.href = '/dashboard';
-              }}>
-                <img 
-                  src="/logo.svg" 
-                  alt="Quizwala Logo" 
-                  className="w-11 h-11 object-contain"
-                />
-              </button>
-            </div> */}
-
-            {/* Quizwala Text */}
-            <button
-              onClick={() => {
-                window.location.href = '/dashboard';
-              }}
-              className="flex-shrink-0"
-            >
-              <h1 className="text-white text-xl font-bold whitespace-nowrap" style={{fontFamily: 'monospace'}}>Quizwala</h1>
-            </button>
+            <div className="text-3xl font-bold text-[#ffb540]" style={{fontFamily: 'monospace'}}>Quizwinz</div>
           </div>
 
-          {/* Right Section: LOGIN Button or Coins Balance + View Profile */}
-          <div className="flex items-center gap-3 flex-shrink-0 ml-auto">
-            {!loading && (
-              <>
-                {user ? (
-                  <>
-                    {/* Coin balance - click goes to login (re-auth) */}
-                    <button
-                      onClick={() => router.push('/login')}
-                      className="flex items-center gap-2 bg-[#FFF6D9] px-3 sm:px-4 py-2 rounded-lg flex-shrink-0 min-w-fit hover:bg-[#FFF6D9]/90 transition-colors cursor-pointer"
-                    >
-                      <img src="/coin.svg" alt="Coins Icon" className="w-5 h-5 flex-shrink-0" />
-                      <span className="text-black font-bold text-sm whitespace-nowrap">
-                        {user.coins?.toLocaleString() || 0}
-                      </span>
-                    </button>
-                    {/* View Profile Button - Show when logged in */}
-                    <button
-                      onClick={() => router.push('/profile')}
-                      className="bg-[#FFF6D9] text-black font-bold px-3 sm:px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors text-xs sm:text-sm whitespace-nowrap flex-shrink-0"
-                    >
-                      View Profile
-                    </button>
-                  </>
-                ) : (
-                  // Show guest coins or login button
-                  guestCoins > 0 ? (
-                    <button
-                      onClick={() => router.push('/login')}
-                      className="flex items-center gap-2 bg-[#FFF6D9] px-3 sm:px-4 py-2 rounded-lg flex-shrink-0 min-w-fit hover:bg-[#FFF6D9]/90 transition-colors cursor-pointer"
-                    >
-                      <img src="/coin.svg" alt="Coins Icon" className="w-5 h-5 flex-shrink-0" />
-                      <span className="text-black font-bold text-sm whitespace-nowrap">
-                        {guestCoins.toLocaleString()} <span className="hidden sm:inline">(Guest)</span>
-                      </span>
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => router.push('/login')}
-                      className="bg-[#FFF6D9] text-black font-bold px-4 sm:px-6 py-2 rounded-lg hover:bg-gray-100 transition-colors text-sm whitespace-nowrap flex-shrink-0"
-                    >
-                      LOGIN
-                    </button>
-                  )
-                )}
-              </>
-            )}
+          <div className="flex items-center gap-1 border border-yellow-400 px-3 py-1 rounded-full text-yellow-400 text-sm font-semibold">
+            🪙 {guestCoins.toLocaleString()}
           </div>
         </div>
       </div>
