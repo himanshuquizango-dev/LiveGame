@@ -114,21 +114,13 @@ export default function CoinHistoryPage() {
         keywords="coin history, quiz coins, transaction history, coin balance, quiz rewards, coin tracking"
       />
       <DashboardNav />
-      <div className="min-h-screen bg-[#0D0009] p-5" style={{
+      <div className="min-h-screen bg-[#172031] p-5" style={{
         boxShadow: '0px 0px 2px 0px #FFF6D9'
       }}>
         <div className="max-w-md mx-auto">
           {/* Header */}
           <div className="mb-6">
-            <button
-              onClick={() => router.back()}
-              className="text-[#FFF6D9] hover:text-gray-300 transition-colors mb-4"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <h1 className="text-[#FFF6D9] text-2xl font-bold">Coin History</h1>
+            <h1 className="text-white text-2xl font-semibold">Coin History</h1>
             {user && (
               <div className="flex items-center gap-2 mt-2">
                 <img src="/coin.svg" alt="Coins" className="w-5 h-5" />
@@ -167,8 +159,8 @@ export default function CoinHistoryPage() {
               onClick={() => setActiveTab('all')}
               className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-colors ${
                 activeTab === 'all'
-                  ? 'bg-[#FFD602] text-[#0D0009]'
-                  : 'bg-[#1a0f15] text-[#FFF6D9]/70 border border-[#564C53]'
+                  ? 'bg-[#FFB540] text-[#0D0009]'
+                  : 'bg-[#172031] text-white  border-2 border-yellow-400'
               }`}
             >
               All
@@ -177,14 +169,14 @@ export default function CoinHistoryPage() {
               onClick={() => setActiveTab('pending')}
               className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1 ${
                 activeTab === 'pending'
-                  ? 'bg-[#FFD602] text-[#0D0009]'
-                  : 'bg-[#1a0f15] text-[#FFF6D9]/70 border border-[#564C53]'
+                  ? 'bg-[#FFB540] text-[#0D0009]'
+                  : 'bg-[#172031] text-white  border-2 border-yellow-400'
               }`}
             >
               Pending
               {pendingCount > 0 && (
                 <span className={`text-xs px-1.5 py-0.5 rounded-full ${
-                  activeTab === 'pending' ? 'bg-[#0D0009]/20' : 'bg-[#FFD602]/20 text-[#FFD602]'
+                  activeTab === 'pending' ? 'bg-[#172031]' : ' text-white  border-2 border-yellow-400'
                 }`}>
                   {pendingCount}
                 </span>
@@ -194,8 +186,8 @@ export default function CoinHistoryPage() {
               onClick={() => setActiveTab('completed')}
               className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-colors ${
                 activeTab === 'completed'
-                  ? 'bg-[#FFD602] text-[#0D0009]'
-                  : 'bg-[#1a0f15] text-[#FFF6D9]/70 border border-[#564C53]'
+                  ? 'bg-[#FFB540] text-[#0D0009]'
+                  : 'bg-[#172031] text-white  border-2 border-yellow-400'
               }`}
             >
               Completed
@@ -415,14 +407,14 @@ export default function CoinHistoryPage() {
               )}
             </div>
           ) : (
-            <div className="bg-[#1a0f15] rounded-xl p-8 text-center border border-[#564C53]">
-              <div className="w-16 h-16 mx-auto mb-4 bg-[#FFD602]/20 rounded-full flex items-center justify-center">
+            <div className="bg-[#172031] rounded-xl p-8 text-center border border-[#564C53]">
+              <div className="w-16 h-16 mx-auto mb-4 bg-[#FFB540]/20 rounded-full flex items-center justify-center">
                 <span className="text-3xl">🔒</span>
               </div>
-              <p className="text-[#FFF6D9] text-lg font-semibold mb-4">Please sign in to view your coin history</p>
+              <p className="text-white text-lg font-semibold mb-4">Please sign in to view your coin history</p>
               <button
                 onClick={() => router.push('/login')}
-                className="bg-[#FFD602] text-[#0D0009] font-bold px-6 py-3 rounded-lg hover:bg-[#FFE033] transition-colors"
+                className="bg-[#FFB540] text-[#0D0009] font-bold px-6 py-3 rounded-lg hover:bg-[#FFE033] transition-colors"
               >
                 Sign In
               </button>
@@ -431,14 +423,13 @@ export default function CoinHistoryPage() {
 
           {/* Advertisement Section */}
           <div className="mt-6">
-            <p className="text-center border-t border-[#564C53] text-white text-xs pt-2 mb-2 font-medium">ADVERTISEMENT</p>
-            <div className="w-full overflow-hidden border-b border-[#564C53]">
+            <div className="w-full overflow-hidden bg-[#0a0e14]">
               <AdsenseAd adSlot="8153775072" adFormat="auto" />
+            <p className="text-center  text-white text-xs pt-2 mb-2 font-medium">ADVERTISEMENT</p>
             </div>
           </div>
         </div>
       </div>
-      <Footer />
     </>
   );
 }

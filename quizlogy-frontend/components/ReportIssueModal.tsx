@@ -79,15 +79,15 @@ export const ReportIssueModal = ({ isOpen, onClose }: ReportIssueModalProps) => 
       />
 
       {/* Modal */}
-      <div className={`fixed bottom-0 w-full sm:w-[420px] md:w-[488px] bg-[#FFF6D9] rounded-t-3xl z-50 max-h-[70vh] flex flex-col transform transition-transform duration-300 ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}>
+      <div className={`fixed bottom-0 w-full sm:w-[420px] md:w-[488px] bg-[#172031] rounded-t-3xl z-50 max-h-[70vh] flex flex-col transform transition-transform duration-300 ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}>
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-black/10">
-          <h2 className="text-black text-xl font-bold">Report An Issue</h2>
+          <h2 className="text-white text-xl font-bold">Report An Issue</h2>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-black hover:bg-gray-100 transition-colors"
+            className="w-8 h-8 rounded-full  flex items-center justify-center "
           >
-            <svg className="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -95,7 +95,7 @@ export const ReportIssueModal = ({ isOpen, onClose }: ReportIssueModalProps) => 
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto px-6 py-4">
-          <p className="text-black mb-6">What Kind Of Problem Have You Encountered?</p>
+          <p className="text-white mb-6">What Kind Of Problem Have You Encountered?</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Radio Options */}
@@ -111,27 +111,27 @@ export const ReportIssueModal = ({ isOpen, onClose }: ReportIssueModalProps) => 
                     value={option}
                     checked={selectedIssue === option}
                     onChange={(e) => setSelectedIssue(e.target.value)}
-                    className="w-5 h-5 appearance-none border-2 border-black rounded-full cursor-pointer focus:outline-none relative"
+                    className="w-5 h-5 appearance-none border-2 border-white rounded-full cursor-pointer focus:outline-none relative"
                     style={{
-                      backgroundColor: selectedIssue === option ? '#FACC15' : 'transparent',
-                      borderColor: selectedIssue === option ? '#0D0009' : '#0D0009',
+                      backgroundColor: selectedIssue === option ? '#FFB540' : 'transparent',
+                      borderColor: selectedIssue === option ? 'white' : 'white',
                       backgroundImage: selectedIssue === option ? 'none' : 'none',
                     }}
                   />
-                  <span className="text-black">{option}</span>
+                  <span className="text-white">{option}</span>
                 </label>
               ))}
             </div>
 
             {/* Other Description Input */}
             {selectedIssue === 'Other' && (
-              <div className="mt-4 border-3 border-black/10 rounded-lg p-2">
+              <div className="mt-4 rounded-lg p-2">
                 <textarea
                   value={otherDescription}
                   onChange={(e) => setOtherDescription(e.target.value)}
                   placeholder="Please describe the issue..."
                   rows={4}
-                  className="w-full bg-[#FFF6D9] text-black px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none placeholder-black/30"
+                  className="w-full bg-white focus:outline-none text-black px-4 py-3 rounded-lg  "
                   required={selectedIssue === 'Other'}
                 />
               </div>
@@ -141,10 +141,9 @@ export const ReportIssueModal = ({ isOpen, onClose }: ReportIssueModalProps) => 
             <button
               type="submit"
               disabled={submitting}
-              className="w-full bg-yellow-400 text-black font-bold py-4 px-6 rounded-lg hover:bg-yellow-500 transition-colors mt-8 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden"
+              className="w-full bg-[#FFB540] text-white font-semibold py-4 px-6 rounded-lg "
             >
               <span className="relative z-10">{submitting ? 'Sending...' : 'Send Feedback'}</span>
-              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-black/40 to-transparent shiny-effect"></span>
             </button>
           </form>
         </div>
