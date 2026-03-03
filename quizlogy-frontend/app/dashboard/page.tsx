@@ -417,16 +417,68 @@ export default function DashboardPage() {
 
 
           {/* First Advertisement - Above the fold, after Top Quizzes */}
-                <div className="w-full overflow-hidden border-b border-[#564C53] bg-black">
+                <div className="w-full overflow-hidden">
                   <AdsenseAd adSlot="8153775072" adFormat="auto" />
-          <p className="text-center mt-2 mb-2 text-xs text-[#414d65]">A D V E R T I S E M E N T</p>
+          <p className="text-center text-xs text-[#414d64] font-semibold">A  D V E R T I S E M E N T</p>
                 </div>
 
-          {/* Quiz Contests For You Section - First 2 Contests */}
+                      <div className="flex gap-3 overflow-x-auto pb-4 -mx-5 px-5 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+              {getTrendingCategories().map((category) => {
+                const categoryImageUrl = category.imageUrl || getImageUrl(category.imagePath || category.image || '');
+                const bgColor = category.backgroundColor || '#FFF6D9';
 
+                return (
+                  <div
+                    key={category.id}
+                    onClick={() => router.push(`/category/${encodeURIComponent(category.name)}?id=${category.id}`)}
+                    className="flex-shrink-0 cursor-pointer hover:scale-[1.02] transition-transform shadow-lg flex flex-col items-center justify-center rounded-2xl overflow-hidden"
+                    style={{
+                      padding: '10px'
+                    }}
+                  >
+                    <p className="text-white font-bold text-[10px] text-center leading-tight w-full truncate">
+                      {category.name}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          {/* Quiz Contests For You Section - First 2 Contests */}
+          <div className="mb-8 m-5">
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-white text-xl font-bold">Quiz Contests For You</h1>
+              <button
+                onClick={() => router.push('/all-categories')}
+                className="text-white underline hover:text-gray-300 transition-colors text-sm"
+              >
+                SEE ALL
+              </button>
+            </div>
+
+            {/* First 2 Contests */}
+            {!loading && !error && (
+              <>
+                {contestsForYou.length === 0 ? (
+                  <div className="text-center text-white py-12">
+                    <div className="text-lg">No contests available</div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {contestsForYou.slice(0).map((contest) => (
+                      <ContestCard
+                        key={contest.id}
+                        contest={contest}
+                        playerCount={getPlayerCount(contest)}
+                        onPlayClick={() => handlePlayClick(contest.id)}
+                      />
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
 
           {/* Play Games Section */}
-          {/* <PlayGamesSection /> */}
 
           {/* Remaining Quiz Contests For You */}
           {/* {!loading && !error && contestsForYou.length > 2 && (
@@ -453,129 +505,37 @@ export default function DashboardPage() {
           </div> */}
 
           {/* Quiz Bite Section */}
-          {/* <div className="mb-8 m-5">
-            <div className="mb-4">
-              <h1 className="text-white text-2xl font-bold mb-2">Quiz Bite</h1>
-              <p className="text-white/70 text-sm">Short, quick quizzes from topics you love!</p>
-            </div>
-
-            <div className="bg-[#9272FF] rounded-xl p-4 sm:p-6 mb-8" style={{
-                  boxShadow: '0px 0px 2px 0px #FFF6D9'
-            }}>
-              <h2 className="text-[#FFFFFF] text-lg font-bold text-center mb-4 sm:mb-6">Pick Upto 3 Categories</h2>
-              
-              <div className="grid grid-cols-3 gap-2 sm:gap-4 md:gap-8 mb-4 sm:mb-6">
-                {[0, 1, 2].map((index) => {
-                  const category = selectedCategories[index];
-                  return (
-                    <div
-                      key={index}
-                      className={`relative flex flex-col w-full rounded-xl overflow-hidden cursor-pointer transition-transform hover:scale-105 aspect-[3/4] ${
-                        category ? 'bg-[#FFF6D9]' : 'bg-[#0D0009] border border-dashed border-[#FBD457]'
-                      }`}
-                      onClick={() => {
-                        if (category) {
-                          // Remove category
-                          setSelectedCategories(selectedCategories.filter((_, i) => i !== index));
-                        } else {
-                          // Open category selection modal
-                          if (selectedCategories.length < 3) {
-                            setShowCategoryModal(true);
-                          }
-                        }
-                      }}
-                    >
-                      {category ? (
-                        <>
-                          <div className="flex-1 min-h-0 p-2 sm:p-4 flex items-center justify-center">
-                            {(category.imagePath || category.image) ? (
-                              <img
-                                src={getImageUrl(category.imagePath || category.image, 'category')}
-                                alt={category.name}
-                                className="w-full h-full object-contain"
-                                onError={(e) => {
-                                  const img = e.currentTarget as HTMLImageElement;
-                                  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
-                                  const filename = category.imagePath || category.image;
-                                  
-                                  // Prevent infinite loop
-                                  const hasTriedCategories = img.dataset.triedCategories === 'true';
-                                  const hasTriedContests = img.dataset.triedContests === 'true';
-                                  
-                                  // If first attempt failed and it's just a filename, try the other folder
-                                  if (filename && !filename.includes('/')) {
-                                    if (img.src.includes('/uploads/categories/') && !hasTriedContests) {
-                                      // First try was categories, now try contests
-                                      img.dataset.triedCategories = 'true';
-                                      img.dataset.triedContests = 'true';
-                                      img.src = `${baseUrl}/uploads/contests/${filename}`;
-                                    } else if (img.src.includes('/uploads/contests/') && !hasTriedCategories) {
-                                      // First try was contests, now try categories
-                                      img.dataset.triedContests = 'true';
-                                      img.dataset.triedCategories = 'true';
-                                      img.src = `${baseUrl}/uploads/categories/${filename}`;
-                                    } else {
-                                      // Both folders tried, hide image
-                                      img.style.display = 'none';
-                                    }
-                                  } else {
-                                    img.style.display = 'none';
-                                  }
-                                }}
-                              />
-                            ) : (
-                              <div className="relative w-full h-full flex items-center justify-center">
-                                <div className="relative w-12 h-10">
-                                  <div className="absolute top-0 left-1.5 w-6 h-4 bg-blue-500 rounded-full"></div>
-                                  <div className="absolute top-0.5 right-1.5 w-5 h-4 bg-green-500 rounded-full"></div>
-                                  <div className="absolute bottom-1.5 left-3 w-4 h-4 bg-yellow-400 rounded-full"></div>
-                                  <div className="absolute bottom-1 right-3 w-4 h-3 bg-red-500 rounded-full"></div>
-                                  <div className="absolute top-2 left-4.5 w-3 h-2 bg-purple-500 rounded-full"></div>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                          <div className="bg-[#FFF6D9] rounded-b-xl px-2 sm:px-3 py-1.5 sm:py-2 flex-shrink-0">
-                            <p className="text-black font-semibold text-xs text-center truncate">
-                              {category.name}
-                            </p>
-                          </div>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedCategories(selectedCategories.filter((_, i) => i !== index));
-                            }}
-                            className="absolute top-2 right-2 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold hover:bg-red-600"
-                          >
-                            ×
-                          </button>
-                        </>
-                      ) : (
-                        <div className="flex-1 flex items-center justify-center min-h-0">
-                          <span className="text-[#FFF6D9] text-2xl sm:text-3xl font-light">+</span>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-
-
-              <button
-                onClick={handleCreateQuiz}
-                disabled={selectedCategories.length === 0}
-                className={`w-full py-4 rounded-xl font-bold text-lg transition-colors ${
-                  selectedCategories.length === 0
-                    ? 'bg-gray-500 text-gray-300 cursor-not-allowed'
-                    : 'bg-[#FBD457] text-[#0D0009] hover:bg-yellow-500'
-                }`}
-              >
-                Create Quiz
-              </button>
-            </div>
-          </div> */}
 
           {/* Trending Quiz Topics Section */}
+          <div className="mb-8 m-5">
+            <div className="flex justify-between items-center mb-6">
+            </div>
+
+            {/* Trending Category Cards */}
+            {/* <div className="flex gap-3 overflow-x-auto pb-4 -mx-5 px-5 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+              {getTrendingCategories().map((category) => {
+                const categoryImageUrl = category.imageUrl || getImageUrl(category.imagePath || category.image || '');
+                const bgColor = category.backgroundColor || '#FFF6D9';
+
+                return (
+                  <div
+                    key={category.id}
+                    onClick={() => router.push(`/category/${encodeURIComponent(category.name)}?id=${category.id}`)}
+                    className="flex-shrink-0 cursor-pointer hover:scale-[1.02] transition-transform shadow-lg flex flex-col items-center justify-center rounded-2xl overflow-hidden"
+                    style={{
+                      width: '100px',
+                      height: '100px',
+                      padding: '10px'
+                    }}
+                  >
+                    <p className="text-[#0D0009] font-bold text-[10px] text-center leading-tight w-full truncate">
+                      {category.name}
+                    </p>
+                  </div>
+                );
+              })}
+            </div> */}
+          </div>
 
           
         </div>

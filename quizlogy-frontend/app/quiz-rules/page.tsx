@@ -17,95 +17,83 @@ export default function QuizRulesPage() {
         keywords="quiz rules, how to play quiz, quiz guidelines, quiz instructions, quiz scoring"
       />
       <DashboardNav />
-      <div className="min-h-screen bg-[#0D0009]" style={{
-        boxShadow: '0px 0px 2px 0px #FFF6D9'
-      }}>
+      <div className="min-h-screen bg-[#172031]">
         <div className="max-w-4xl mx-auto p-5">
           {/* Contest Rules Content */}
-          <button
-              onClick={() => router.push('/dashboard')}
-              className="top-4 left-7 text-lg font-medium text-[#FFF6D9] hover:text-gray-600 transition-colors z-10 mb-4"
-            >
-              Back
-            </button>
-          <div className="bg-[#FFF6D9] rounded-xl p-6 mb-5 border border-[#BFBAA7]" style={{
-            boxShadow: '0px 0px 2px 0px #FFF6D9'
-          }}>
-            {/* Back Button */}
-            
-            {/* Title */}
+          <div className="">
             <div className="text-center mb-8">
-              <h1 className="text-[#0D0009] text-4xl font-bold mb-2">CONTEST RULES!</h1>
-              <div className="h-1 bg-yellow-400 mx-auto" style={{ width: '200px' }}></div>
+              <h1 className="text-white text-2xl font-semibold mb-2">Contest Rules!</h1>
             </div>
             
             {/* Rules Content */}
-            <div className="space-y-4 text-[#0D0009]">
+            <div className="space-y-4 text-white">
               <ul className="space-y-3 list-none">
                 <li className="flex items-start">
-                  <span className="text-yellow-400 mr-2">•</span>
-                  <span>Winner will be declared based on scores. In case of a tie, the earliest completion time will be considered.</span>
+                  <span className="text-white mr-2">•</span>
+                  <span>The winners for each quiz will be declared based on the scores they obtain during the participation in the quiz</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-yellow-400 mr-2">•</span>
-                  <span>Winner declaration time is fixed. Check the contest details for the exact time.</span>
+                  <span className="text-white mr-2">•</span>
+                  <span>There will be a fixed time for declaring the winners of each quiz.</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-yellow-400 mr-2">•</span>
-                  <span>You have 60 seconds to answer 20 questions.</span>
+                  <span className="text-white mr-2">•</span>
+                  <span>You will have overall 60 seconds to solve as many as questions from 20 questions in quiz.</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-yellow-400 mr-2">•</span>
-                  <span>Each question has 4 options with only one correct answer.</span>
+                  <span className="text-white mr-2">•</span>
+                  <span>There will be 4 options given below each question and one will be the answer for it out of them.</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-yellow-400 mr-2">•</span>
-                  <span>+25 points for right answer, -10 points for wrong answer.</span>
+                  <span className="text-white mr-2">•</span>
+                  <span>Each right answer fetches you 25 points.</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-yellow-400 mr-2">•</span>
-                  <span>You can use each lifeline once per contest. Lifelines can be activated either by spending coins or watching an advertisement.</span>
+                  <span className="text-white mr-2">•</span>
+                  <span>Each wrong answer gives you (-) 10 points.</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-white mr-2">•</span>
+                  <span>Do not forget to use the lifelines in case if you are stuck during the contest.</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-white mr-2">•</span>
+                  <span>Remember users can use each lifeline once during the each contest. Use a given amount of coins from your coin bank or watch an ad for a few secs to use the lifeline for free!</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-white mr-2">•</span>
+                  <span>You would have 4 different lifelines to use:</span>
+                </li>
+                <li className="flex items-start pl-5">
+                  <span className="text-white mr-2">•</span>
+                  <span>50:50 – On using it, two incorrect answers will be eliminated from the screen.</span>
+                </li>
+                <li className="flex items-start pl-5">
+                  <span className="text-white mr-2">•</span>
+                  <span>Freezer Time – A pause for the ongoing timer will take place for 30 seconds while allowing the users get more time to answer the question.</span>
+                </li>
+                <li className="flex items-start pl-5">
+                  <span className="text-white mr-2">•</span>
+                  <span>Audience Poll – You can use this option to choose the right answer out of 4 options by using the intelligence of the smart audience.</span>
+                </li>
+                <li className="flex items-start pl-5">
+                  <span className="text-white mr-2">•</span>
+                  <span>Flip Question – A new question will interchange the question currently showing on the screen.</span>
                 </li>
               </ul>
-
-              {/* Lifelines Section */}
-              <div className="mt-6 pt-6 border-t border-[#0D0009]/20">
-                <h2 className="text-yellow-400 text-xl font-bold mb-4">Lifelines:</h2>
-                <ul className="space-y-3 list-none">
-                  <li className="flex items-start">
-                    <span className="text-yellow-400 mr-2 font-bold">50:50</span>
-                    <span> - Eliminates two incorrect answers, leaving you with two options.</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-yellow-400 mr-2 font-bold">Freezer Time</span>
-                    <span> - Pauses the timer for 30 seconds, giving you extra time to think.</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-yellow-400 mr-2 font-bold">Audience Poll</span>
-                    <span> - Helps you choose the right answer using smart audience intelligence.</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-yellow-400 mr-2 font-bold">Flip Question</span>
-                    <span> - Replaces the current question with a new one.</span>
-                  </li>
-                </ul>
-              </div>
             </div>
           </div>
 
           {/* Advertisement Section - Optimally placed after rules content */}
-          <div className="bg-[#0D0009] rounded-lg p-4 mb-5 border border-[#FFF6D9]/20" style={{
-            boxShadow: '0px 0px 2px 0px #FFF6D9'
-          }}>
-            <p className="text-center text-[#FFF6D9] text-xs mb-2 font-medium">ADVERTISEMENT</p>
+          {/* <div>
             <div className="w-full overflow-hidden">
               <AdsenseAd adSlot="8153775072" adFormat="auto" />
+            <p className="text-center text-[#FFF6D9] text-xs  font-medium">ADVERTISEMENT</p>
             </div>
-          </div>
+          </div> */}
 
         </div>
       </div>
-      <Footer />
     </>
   );
 }

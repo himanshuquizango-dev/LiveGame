@@ -291,7 +291,7 @@ export default function IntroPage() {
       <div className="w-full overflow-hidden ">
         <AdsenseAd adSlot="8153775072" adFormat="auto" />
       </div>
-      <p className="text-center text-[#414d65] text-xs mt-2 mb-2 font-medium">ADVERTISEMENT</p>
+      <p className="text-center text-[#414d65] text-xs mt-2 mb-2 font-medium">A D V E R T I S E M E N T</p>
     </div>
     <div className="min-h-screen  from-purple-800 via-purple-700 to-purple-900 px-5 py-0 pb-1 ">
 
@@ -379,11 +379,11 @@ export default function IntroPage() {
       )}
 
       {/* Second Advertisement - Between content sections for engagement */}
-      <div className="bg-[#2a334d] rounded-lg p-4 mb-5 shadow-lg">
+      <div className="bg-[#2a334d] rounded-lg  mb-5 shadow-lg">
         <div className="w-full overflow-hidden">
           <AdsenseAd adSlot="8153775072" adFormat="auto" />
         </div>
-        <p className="text-center text-gray-400 text-xs mb-2 font-medium">A D V E R T I S E M E N T</p>
+        <p className="text-center text-[#414d65] text-xs mt-2 mb-2 font-medium">A D V E R T I S E M E N T</p>
       </div>
 
 

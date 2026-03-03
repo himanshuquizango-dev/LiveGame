@@ -127,22 +127,8 @@ export const DashboardNav = () => {
     <div className="flex items-center flex-shrink-0 z-10">
       <button 
         onClick={() => setSidebarOpen(true)}
-        className="flex flex-col gap-1.5 cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0"
-      >
-        <svg
-          width="50"
-          height="50"
-          viewBox="0 0 120 120"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <rect x="20" y="25" width="55" height="8" rx="2" fill="#E5E7EB" />
-          <rect x="20" y="50" width="55" height="8" rx="2" fill="#E5E7EB" />
-          <rect x="20" y="75" width="80" height="8" rx="2" fill="#E5E7EB" />
-          <polygon
-            points="80,22 100,42 80,62 85,62 105,42 85,22"
-            fill="#E5E7EB"
-          />
-        </svg>
+        className="flex flex-col gap-1.5 cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0 text-white"
+      ><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24"  height="2em" width="2em" xmlns="http://www.w3.org/2000/svg"><path d="M21 17.9995V19.9995H3V17.9995H21ZM17.4038 3.90332L22 8.49951L17.4038 13.0957L15.9896 11.6815L19.1716 8.49951L15.9896 5.31753L17.4038 3.90332ZM12 10.9995V12.9995H3V10.9995H12ZM12 3.99951V5.99951H3V3.99951H12Z"></path></svg>
       </button>
     </div>
 
@@ -152,7 +138,7 @@ export const DashboardNav = () => {
     </div>
 
     {/* Right Side: Coins */}
-    <div className="flex items-center gap-1 border border-yellow-400 px-3 py-1 rounded-full text-yellow-400 text-sm font-semibold z-10">
+    <div className="flex items-center gap-1 border-2 border-yellow-400 px-3 py-1 rounded-full text-yellow-400 text-sm font-semibold z-10">
       🪙 {guestCoins.toLocaleString()}
     </div>
     
