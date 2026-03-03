@@ -414,180 +414,19 @@ export default function DashboardPage() {
       <div className="min-h-screen ">
       {/* <div className="min-h-screen m-5"> */}
         <div className="max-w-4xl mx-auto">
-          {/* Top Battles Section */}
-          <div className="mb-8 m-5">
-            <div className="flex justify-between items-start mb-6">
-              <div>
-                <h1 className="text-white text-xl font-bold mb-1">Top Battles</h1>
-                <p className="text-white text-sm">Test Between 2 Rivals</p>
-              </div>
-              <button
-                onClick={() => router.push('/battles')}
-                className="text-white underline hover:text-gray-300 transition-colors text-sm font-semibold uppercase"
-              >
-                SEE ALL
-              </button>
-            </div>
 
-            {/* Loading State */}
-            {loadingBattles && (
-              <div className="text-center text-white py-12">
-                <div className="text-lg">Loading battles...</div>
-              </div>
-            )}
-
-            {/* Top Battles Grid */}
-            {!loadingBattles && (
-              <>
-                {topBattles.length === 0 ? (
-                  <div className="text-center text-white py-12">
-                    <div className="text-lg">No battles available</div>
-                  </div>
-                ) : (
-                  <div className="flex gap-2 justify-between flex-nowrap">
-                    {topBattles.slice(0, 3).map((battle) => {
-                      const topColor = battle.backgroundColorTop || '#C0FFE3';
-                      const bottomColor = battle.backgroundColorBottom || '#00AB5E';
-                      const isFavorite = favoriteBattles.has(battle.id);
-                      
-                      return (
-                      <div
-                        key={battle.id}
-                        className="relative rounded-xl overflow-hidden cursor-pointer hover:scale-[1.02] transition-transform flex flex-col flex-1 basis-0 min-w-0"
-                        onClick={() => handleBattleClick(battle.id)}
-                        style={{
-                          background: `linear-gradient(0deg, ${bottomColor} 0%, ${topColor} 100%)`,
-                          aspectRatio: '140/120'
-                        }}
-                      >
-                        {/* Heart Icon */}
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setFavoriteBattles(prev => {
-                              const newSet = new Set(prev);
-                              if (isFavorite) {
-                                newSet.delete(battle.id);
-                              } else {
-                                newSet.add(battle.id);
-                              }
-                              return newSet;
-                            });
-                          }}
-                          className="absolute top-1.5 right-1.5 z-10 p-1 rounded-full bg-white hover:bg-gray-100 transition-colors"
-                        >
-                          <svg
-                            width="12"
-                            height="12"
-                            viewBox="0 0 24 24"
-                            fill={isFavorite ? "#EF4444" : "none"}
-                            stroke={isFavorite ? "#EF4444" : "#0D0009"}
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                          </svg>
-                        </button>
-                        {/* Icon/Image Area */}
-                        <div className="flex-1 p-1 flex items-center justify-center min-h-0">
-                          {battle.imageUrl || battle.imagePath ? (
-                            <img
-                              src={battle.imageUrl || getImageUrl(battle.imagePath, 'battles')}
-                              alt={battle.name}
-                              className="object-contain max-h-full max-w-full"
-                              style={{ maxHeight: '55%', maxWidth: '75%' }}
-                              onError={(e) => {
-                                const img = e.currentTarget as HTMLImageElement;
-                                const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
-                                const filename = battle.imagePath;
-
-                                // Prevent infinite loop
-                                const hasTriedCategories = img.dataset.triedCategories === 'true';
-                                const hasTriedContests = img.dataset.triedContests === 'true';
-
-                                if (filename && !filename.includes('/')) {
-                                  if (img.src.includes('/uploads/contests/') && !hasTriedCategories) {
-                                    img.dataset.triedContests = 'true';
-                                    img.dataset.triedCategories = 'true';
-                                    img.src = `${baseUrl}/uploads/categories/${filename}`;
-                                  } else if (img.src.includes('/uploads/categories/') && !hasTriedContests) {
-                                    img.dataset.triedCategories = 'true';
-                                    img.dataset.triedContests = 'true';
-                                    img.src = `${baseUrl}/uploads/contests/${filename}`;
-                                  } else {
-                                    img.style.display = 'none';
-                                  }
-                                } else {
-                                  img.style.display = 'none';
-                                }
-                              }}
-                            />
-                          ) : (
-                            <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-                              <span className="text-white text-xl font-bold">⚔️</span>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Title - Bottom Center */}
-                        <div className="px-1 pb-1 pt-0 flex items-center justify-center flex-shrink-0">
-                          <h3 className="text-white font-bold text-xs sm:text-sm text-center leading-tight break-words w-full">
-                            {battle.name}
-                          </h3>
-                        </div>
-                      </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </>
-            )}
-          </div>
 
           {/* First Advertisement - Above the fold, after Top Quizzes */}
-          <p className="text-center text-white text-xs border-t border-[#564C53] mt-2 mb-2 font-medium">ADVERTISEMENT</p>
-                <div className="w-full overflow-hidden border-b border-[#564C53]">
+                <div className="w-full overflow-hidden border-b border-[#564C53] bg-black">
                   <AdsenseAd adSlot="8153775072" adFormat="auto" />
+          <p className="text-center mt-2 mb-2 text-xs text-[#414d65]">A D V E R T I S E M E N T</p>
                 </div>
 
           {/* Quiz Contests For You Section - First 2 Contests */}
-          <div className="mb-8 m-5">
-            <div className="flex justify-between items-center mb-6">
-              <h1 className="text-white text-xl font-bold">Quiz Contests For You</h1>
-              <button
-                onClick={() => router.push('/all-categories')}
-                className="text-white underline hover:text-gray-300 transition-colors text-sm"
-              >
-                SEE ALL
-              </button>
-            </div>
 
-            {/* First 2 Contests */}
-            {!loading && !error && (
-              <>
-                {contestsForYou.length === 0 ? (
-                  <div className="text-center text-white py-12">
-                    <div className="text-lg">No contests available</div>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {contestsForYou.slice(0).map((contest) => (
-                      <ContestCard
-                        key={contest.id}
-                        contest={contest}
-                        playerCount={getPlayerCount(contest)}
-                        onPlayClick={() => handlePlayClick(contest.id)}
-                      />
-                    ))}
-                  </div>
-                )}
-              </>
-            )}
-          </div>
 
           {/* Play Games Section */}
-          <PlayGamesSection />
+          {/* <PlayGamesSection /> */}
 
           {/* Remaining Quiz Contests For You */}
           {/* {!loading && !error && contestsForYou.length > 2 && (
@@ -614,7 +453,7 @@ export default function DashboardPage() {
           </div> */}
 
           {/* Quiz Bite Section */}
-          <div className="mb-8 m-5">
+          {/* <div className="mb-8 m-5">
             <div className="mb-4">
               <h1 className="text-white text-2xl font-bold mb-2">Quiz Bite</h1>
               <p className="text-white/70 text-sm">Short, quick quizzes from topics you love!</p>
@@ -734,76 +573,16 @@ export default function DashboardPage() {
                 Create Quiz
               </button>
             </div>
-          </div>
+          </div> */}
 
           {/* Trending Quiz Topics Section */}
-          <div className="mb-8 m-5">
-            <div className="flex justify-between items-center mb-6">
-              <h1 className="text-white text-xl font-bold">Trending Quiz Topics</h1>
-              <button
-                onClick={() => router.push('/all-categories')}
-                className="text-[#FFD602] underline hover:text-[#FFE033] transition-colors text-sm font-semibold uppercase"
-              >
-                SEE ALL
-              </button>
-            </div>
-
-            {/* Trending Category Cards */}
-            <div className="flex gap-3 overflow-x-auto pb-4 -mx-5 px-5 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-              {getTrendingCategories().map((category) => {
-                const categoryImageUrl = category.imageUrl || getImageUrl(category.imagePath || category.image || '');
-                const bgColor = category.backgroundColor || '#FFF6D9';
-
-                return (
-                  <div
-                    key={category.id}
-                    onClick={() => router.push(`/category/${encodeURIComponent(category.name)}?id=${category.id}`)}
-                    className="flex-shrink-0 cursor-pointer hover:scale-[1.02] transition-transform shadow-lg flex flex-col items-center justify-center rounded-2xl overflow-hidden"
-                    style={{
-                      width: '100px',
-                      height: '100px',
-                      backgroundColor: bgColor,
-                      padding: '10px'
-                    }}
-                  >
-                    {/* Category Icon */}
-                    <div className="flex-1 flex items-center justify-center w-full">
-                      {categoryImageUrl ? (
-                        <img
-                          src={categoryImageUrl}
-                          alt={category.name}
-                          className="object-contain"
-                          style={{ width: '50px', height: '50px' }}
-                          onError={(e) => {
-                            const img = e.target as HTMLImageElement;
-                            img.style.display = 'none';
-                          }}
-                        />
-                      ) : (
-                        <div className="w-12 h-12 bg-[#0D0009]/10 rounded-full flex items-center justify-center">
-                          <span className="text-lg font-semibold text-[#0D0009]/40">
-                            {category.name.charAt(0).toUpperCase()}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Category Name */}
-                    <p className="text-[#0D0009] font-bold text-[10px] text-center leading-tight w-full truncate">
-                      {category.name}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
 
           
         </div>
         
       </div>
       {/* Footer */}
-      <Footer />
+      {/* <Footer /> */}
 
       {/* Category Selection Modal */}
       {showCategoryModal && (

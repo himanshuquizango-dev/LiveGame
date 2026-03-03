@@ -119,41 +119,45 @@ export const DashboardNav = () => {
         isOpen={reportIssueModalOpen} 
         onClose={() => setReportIssueModalOpen(false)}
       />
-      <div className="w-full bg-[#0D0009] border-b border-[#564C53] relative">
-        {/* Bell GIF in corner */}
-        <div className="flex items-center justify-between px-4 py-3 w-full">
-          {/* Left Section: Hamburger Menu + Logo + Quizwala */}
-          <div className="flex items-center gap-3 flex-shrink-0">
-            {/* Hamburger Menu Icon */}
-            <button 
-              onClick={() => setSidebarOpen(true)}
-              className="flex flex-col gap-1.5 cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0"
-            >
-                          <svg
-              width="50"
-              height="50"
-              viewBox="0 0 120 120"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <rect x="20" y="25" width="55" height="8" rx="2" fill="#E5E7EB" />
-              <rect x="20" y="50" width="55" height="8" rx="2" fill="#E5E7EB" />
-              <rect x="20" y="75" width="80" height="8" rx="2" fill="#E5E7EB" />
+      
+<div className="w-full bg-[#172031] relative">
+  <div className="flex items-center justify-between px-4 py-3 w-full">
+    
+    {/* Left Side: Sidebar Button */}
+    <div className="flex items-center flex-shrink-0 z-10">
+      <button 
+        onClick={() => setSidebarOpen(true)}
+        className="flex flex-col gap-1.5 cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0"
+      >
+        <svg
+          width="50"
+          height="50"
+          viewBox="0 0 120 120"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <rect x="20" y="25" width="55" height="8" rx="2" fill="#E5E7EB" />
+          <rect x="20" y="50" width="55" height="8" rx="2" fill="#E5E7EB" />
+          <rect x="20" y="75" width="80" height="8" rx="2" fill="#E5E7EB" />
+          <polygon
+            points="80,22 100,42 80,62 85,62 105,42 85,22"
+            fill="#E5E7EB"
+          />
+        </svg>
+      </button>
+    </div>
 
-              <polygon
-                points="80,22 100,42 80,62 85,62 105,42 85,22"
-                fill="#E5E7EB"
-              />
-            </svg>
-            </button>
+    {/* Center: Quizwinz */}
+    <div className="absolute left-1/2 -translate-x-1/2 text-3xl font-bold text-[#ffb540]" style={{fontFamily: 'monospace'}}>
+      Quizwinz
+    </div>
 
-            <div className="text-3xl font-bold text-[#ffb540]" style={{fontFamily: 'monospace'}}>Quizwinz</div>
-          </div>
-
-          <div className="flex items-center gap-1 border border-yellow-400 px-3 py-1 rounded-full text-yellow-400 text-sm font-semibold">
-            🪙 {guestCoins.toLocaleString()}
-          </div>
-        </div>
-      </div>
+    {/* Right Side: Coins */}
+    <div className="flex items-center gap-1 border border-yellow-400 px-3 py-1 rounded-full text-yellow-400 text-sm font-semibold z-10">
+      🪙 {guestCoins.toLocaleString()}
+    </div>
+    
+  </div>
+</div>
     </>
   );
 };
