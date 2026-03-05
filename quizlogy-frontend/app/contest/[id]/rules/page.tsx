@@ -24,7 +24,7 @@ export default function ContestRulesPage() {
   const router = useRouter();
   const params = useParams();
   const contestId = params?.id as string;
-  
+
   const [contest, setContest] = useState<ContestDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,16 +37,16 @@ export default function ContestRulesPage() {
       fetchContestDetails();
     }
     checkAuthStatus();
-    
+
     // Listen for storage changes (when user logs in from another tab/window)
     const handleStorageChange = () => {
       checkAuthStatus();
     };
     window.addEventListener('storage', handleStorageChange);
-    
+
     // Also check periodically in case of same-tab login
     const interval = setInterval(checkAuthStatus, 1000);
-    
+
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       clearInterval(interval);
@@ -112,7 +112,7 @@ export default function ContestRulesPage() {
         } else {
           // Logged in user - join contest (this will deduct coins)
           await contestsApi.joinContest(contestId);
-          
+
           // Update user data in localStorage
           try {
             const userData = await authApi.getCurrentUser();
@@ -146,11 +146,11 @@ export default function ContestRulesPage() {
 
   const handlePlayAsGuest = async () => {
     if (!contestId || !contest) return;
-    
+
     // Guest user - start quiz directly
     try {
       setJoining(true);
-      
+
       // Check if contest has a joining fee
       if (contest.joining_fee > 0) {
         const guestCoins = parseInt(localStorage.getItem('guestCoins') || '0');
@@ -165,7 +165,7 @@ export default function ContestRulesPage() {
         // Trigger coins update event for navbar
         window.dispatchEvent(new Event('coinsUpdated'));
       }
-      
+
       // Store contest ID and redirect to play contest
       sessionStorage.setItem('currentContestId', contestId);
       router.push(`/contest/${contestId}/play`);
@@ -229,7 +229,7 @@ export default function ContestRulesPage() {
 
   return (
     <>
-      <SEOHead 
+      <SEOHead
         title="Contest Rules - Quizwala Contest Guidelines"
         description="Read the rules and guidelines for Quizwala contests. Learn about entry fees, duration, scoring, prizes, and how to participate in quiz contests."
         keywords="contest rules, quiz rules, contest guidelines, quiz contest rules, contest instructions"
@@ -244,21 +244,19 @@ export default function ContestRulesPage() {
               <p className="text-[#FFF6D9] text-md font-bold">{`QuizWala presents ${contest?.name}` || 'QUIZWALA'}</p>
             </div> */}
             {/* Advertisement Section - Between rules and action buttons for optimal visibility */}
-    <div className="min-h-[291px] min-width-[490px] mt-2 bg-[#2a334d] ">
-      <div className="w-full overflow-hidden ">
-        <AdsenseAd adSlot="8153775072" adFormat="auto" />
-      </div>
-      <p className="text-center text-[#414d65] text-xs mt-2 mb-2 font-medium">A D V E R T I S E M E N T</p>
-    </div>
+            <div className="min-h-[291px] min-width-[490px] mt-2 bg-[#2a334d] ">
+              <div className="w-full overflow-hidden ">
+                <AdsenseAd adSlot="8153775072" adFormat="auto" />
+              </div>
+              <p className="text-center text-[#414d65] text-xs mt-2 mb-2 font-medium">A D V E R T I S E M E N T</p>
+            </div>
             {/* Main Card */}
-            <div className="bg-[#0D0009] rounded-xl p-4 mb-6 border border-[#FFF6D9]/20 mx-5" style={{
-              boxShadow: '0px 0px 2px 0px #FFF6D9'
-            }}>
+            <div className=" rounded-md p-4 mb-6 border border-[#FFF6D9]/20 mx-5">
               <div className="flex items-start gap-3">
                 {/* Left side - Icon */}
                 <div className="flex-shrink-0 w-[90px] flex flex-col overflow-hidden">
                   {/* Inner Box - Dark Top Section with Icon */}
-                  <div className="bg-[#0D0009] rounded-t-xl p-2 flex items-center justify-center border border-[#FFF6D9]/30 border-b-0">
+                  <div className=" rounded-t-xl p-2 flex items-center justify-center  border-b-0">
                     <div className="w-10 h-10 flex items-center justify-center">
                       {contest.contestImage ? (
                         <img
@@ -285,143 +283,90 @@ export default function ContestRulesPage() {
                         />
                       ) : (
                         <svg className="w-10 h-10 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                          <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
                         </svg>
                       )}
                     </div>
-                  </div>
-                  {/* Inner Box - Bottom Section with Contest Name */}
-                  <div className="bg-[#FFF6D9] rounded-b-xl px-2 py-2 flex items-center justify-center border border-[#FFF6D9]/30 border-t-0" style={{ minHeight: '36px' }}>
-                    <p className="text-[#0D0009] font-semibold text-[10px] text-center leading-tight line-clamp-2 overflow-hidden">
-                      {contest.name}
-                    </p>
                   </div>
                 </div>
 
                 {/* Right side - Content */}
                 <div className="flex-1 min-w-0">
-                  <p className="text-[#FFF6D9] text-base font-bold mb-2">Play Quiz and Win</p>
-                  <div className="flex items-center gap-2 mb-2 flex-wrap">
-                    <img src="/coin.svg" alt="Coins" className="w-5 h-5 flex-shrink-0" />
-                    <span className="text-yellow-400 text-lg font-bold">{(contest?.winCoins || 24000).toLocaleString()}</span>
-                    <span className="text-[#FFF6D9] text-base">COINS</span>
+                  <p className="text-[#FFB540]   font-semibold">{contest.name}</p>
+                  <p className="text-white flex items-center gap-1 whitespace-nowrap">
+                    Play & WinCoin
+
+                    <svg
+                      stroke="currentColor"
+                      fill="currentColor"
+                      strokeWidth="0"
+                      viewBox="0 0 24 24"
+                      className="text-[#FFB540]"
+                      height="1em"
+                      width="1em"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path d="M12 10c3.976 0 8-1.374 8-4s-4.024-4-8-4-8 1.374-8 4 4.024 4 8 4z"></path>
+                      <path d="M4 10c0 2.626 4.024 4 8 4s8-1.374 8-4V8c0 2.626-4.024 4-8 4s-8-1.374-8-4v2z"></path>
+                      <path d="M4 14c0 2.626 4.024 4 8 4s8-1.374 8-4v-2c0 2.626-4.024 4-8 4s-8-1.374-8-4v2z"></path>
+                      <path d="M4 18c0 2.626 4.024 4 8 4s8-1.374 8-4v-2c0 2.626-4.024 4-8 4s-8-1.374-8-4v2z"></path>
+                    </svg>
+
+                    {(contest?.winCoins || 24000).toLocaleString()}
+                  </p>
+                </div>
+              </div>
+
+              <div className="max-w-md mx-auto p-5 pb-8 relative z-50">
+                <div className="flex flex-col gap-4 relative z-50">
+                  <button
+                    onClick={handleJoinQuizwala}
+                    className="w-full h-[56px] bg-yellow-400 text-[#0D0009] rounded-full font-bold text-lg hover:bg-yellow-500 transition-colors shadow-lg relative overflow-hidden z-50"
+                    style={{ position: 'relative', zIndex: 50 }}
+                  >
+                    <span className="relative z-10">Join Now</span>
+                  </button>
+
+                  <div className="text-center">
+                    <p className="text-[#FFF6D9] font-semibold">Or</p>
                   </div>
-                  <p className="text-[#FFF6D9] text-xs mb-1">Join and save the coins you win!</p>
-                  <p className="text-[#FFF6D9] text-xs">Wish you good luck!</p>
+
+                  <button
+                    onClick={handlePlayAsGuest}
+                    disabled={joining}
+                    className="w-full h-[56px] bg-transparent border-2 border-[#FFF6D9] text-[#FFF6D9] rounded-full font-semibold hover:bg-[#FFF6D9]/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed relative z-50"
+                    style={{ position: 'relative', zIndex: 50 }}
+                  >
+                    {joining ? 'Starting...' : 'Play as Guest'}
+                  </button>
                 </div>
               </div>
-            </div>
-            </div>
 
-            {/* Rules Section */}
-            <div className="m-5">
-              <ul className="space-y-2 text-white text-sm">
-                <li className="flex items-start gap-2">
-                  <span className="text-white mt-1">•</span>
-                  <span>You got 200 seconds to answer all questions.</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-white mt-1">•</span>
-                  <span>Answer as many questions as you can.</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-white mt-1">•</span>
-                  <span>For Every Correct answer you will get 100 points and will loose -50 points on every Incorrect answer.</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-white mt-1">•</span>
-                  <span>You can take help by using the lifelines present in the contest.</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-white mt-1">•</span>
-                  <span>Lifelines can be used for free or by using a given amount of coins for each lifeline.</span>
-                </li>
-              </ul>
+              <div className="m-5">
+                <ul className="space-y-2 text-white text-sm">
+                  <li className="flex items-start gap-2">
+                    <span className="text-white mt-1">•</span>
+                    <span>You got 200 seconds to answer all questions.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-white mt-1">•</span>
+                    <span>Answer as many questions as you can.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-white mt-1">•</span>
+                    <span>For Every Correct answer you will get 100 points and will loose -50 points on every Incorrect answer.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-white mt-1">•</span>
+                    <span>You can take help by using the lifelines present in the contest.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-white mt-1">•</span>
+                    <span>Lifelines can be used for free or by using a given amount of coins for each lifeline.</span>
+                  </li>
+                </ul>
+              </div>
             </div>
-
-            
-            {/* <div className="mb-6">
-              <div className="flex items-center justify-center gap-4 mb-4">
-                <div className="flex-1 h-px bg-white/30"></div>
-                <span className="text-white text-sm">ADVERTISEMENT</span>
-                <div className="flex-1 h-px bg-white/30"></div>
-              </div>
-              <div className="bg-white rounded-xl p-4">
-                <h3 className="text-[#392C6E] text-lg font-bold mb-4">FREE DIAMONDS IN FREE FIRE!</h3>
-                <div className="grid grid-cols-2 gap-3 mb-2">
-                  <button className="bg-gray-200 rounded-lg p-3 border-2 border-dashed border-yellow-500 flex items-center justify-center gap-2">
-                    <svg className="w-6 h-6 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M6 2L2 7v15c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7l-4-5H6zm6 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
-                    </svg>
-                    <span className="text-gray-700 font-bold">500</span>
-                  </button>
-                  <button className="bg-gray-200 rounded-lg p-3 border-2 border-dashed border-gray-400 flex items-center justify-center gap-2">
-                    <svg className="w-6 h-6 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M6 2L2 7v15c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7l-4-5H6zm6 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
-                    </svg>
-                    <span className="text-gray-700 font-bold">1800</span>
-                  </button>
-                  <button className="bg-gray-200 rounded-lg p-3 border-2 border-dashed border-gray-400 flex items-center justify-center gap-2">
-                    <svg className="w-6 h-6 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M6 2L2 7v15c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7l-4-5H6zm6 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
-                    </svg>
-                    <span className="text-gray-700 font-bold">15000</span>
-                  </button>
-                  <button className="bg-gray-200 rounded-lg p-3 border-2 border-dashed border-gray-400 flex items-center justify-center gap-2">
-                    <svg className="w-6 h-6 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M6 2L2 7v15c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7l-4-5H6zm6 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
-                    </svg>
-                    <span className="text-gray-700 font-bold">60000</span>
-                  </button>
-                </div>
-                <button className="w-full bg-gray-200 rounded-lg p-3 border-2 border-dashed border-red-500 flex items-center justify-center gap-2">
-                  <svg className="w-6 h-6 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M6 2L2 7v15c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7l-4-5H6zm6 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
-                  </svg>
-                  <span className="text-gray-700 font-bold">+99999</span>
-                </button>
-              </div>
-            </div> */}
-          
-        </div>
-
-        {/* Sticky Bottom Buttons */}
-        <div className="sticky bottom-0 w-full bg-[#0D0009] pt-4 border-t border-[#FFF6D9]/20 shadow-2xl z-50" style={{
-          boxShadow: '0px 0px 2px 0px #FFF6D9'
-        }}>
-          <div className="max-w-md mx-auto p-5 pb-8 relative z-50">
-            {isLoggedIn ? (
-              // Logged in user - only show "START QUIZ" button
-              <button
-                onClick={handleStartContest}
-                disabled={joining}
-                className="w-full h-[56px] bg-yellow-400 text-[#0D0009] rounded-xl font-bold text-lg hover:bg-yellow-500 transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden z-50"
-                style={{ position: 'relative', zIndex: 50 }}
-              >
-                <span className="relative z-10">{joining ? 'Starting...' : 'START QUIZ'}</span>
-                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent shiny-effect"></span>
-              </button>
-            ) : (
-              // Not logged in - show both buttons
-              <div className="flex gap-3 relative z-50">
-                <button
-                  onClick={handleJoinQuizwala}
-                  className="flex-1 h-[56px] bg-yellow-400 text-[#0D0009] rounded-xl font-bold text-lg hover:bg-yellow-500 transition-colors shadow-lg relative overflow-hidden z-50"
-                  style={{ position: 'relative', zIndex: 50 }}
-                >
-                  <span className="relative z-10">JOIN QUIZWALA</span>
-                  <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent shiny-effect"></span>
-                </button>
-                <button
-                  onClick={handlePlayAsGuest}
-                  disabled={joining}
-                  className="flex-1 h-[56px] bg-transparent border-2 border-[#FFF6D9] text-[#FFF6D9] rounded-xl font-semibold hover:bg-[#FFF6D9]/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed relative z-50"
-                  style={{ position: 'relative', zIndex: 50 }}
-                >
-                  {joining ? 'Starting...' : 'PLAY AS GUEST'}
-                </button>
-              </div>
-            )}
           </div>
         </div>
       </div>
@@ -449,7 +394,7 @@ export default function ContestRulesPage() {
                 {/* Yellow Coin with Dollar Sign */}
                 <div className="w-20 h-20 bg-yellow-400 rounded-full flex items-center justify-center absolute top-0 left-0">
                   <svg className="w-10 h-10 text-[#0D0009]" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
+                    <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z" />
                   </svg>
                 </div>
                 {/* Red Circle with Diagonal Line Overlay */}
@@ -476,7 +421,7 @@ export default function ContestRulesPage() {
                   // For now, award coins and close modal
                   const storedUser = localStorage.getItem('user');
                   const coinsToAward = 100;
-                  
+
                   if (storedUser) {
                     try {
                       // Logged in user - use backend API to award coins
@@ -505,7 +450,7 @@ export default function ContestRulesPage() {
               >
                 <span className="relative z-10 flex items-center gap-2">
                   <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z"/>
+                    <path d="M8 5v14l11-7z" />
                   </svg>
                   Watch Video (Get 100 Coins)
                 </span>
@@ -521,7 +466,7 @@ export default function ContestRulesPage() {
                 className="w-full bg-purple-500 text-[#FFF6D9] rounded-xl py-4 px-6 font-bold text-lg hover:bg-purple-600 transition-colors flex items-center justify-center gap-2"
               >
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"/>
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z" />
                 </svg>
                 Spin Wheel (Cost: 10 Coins)
               </button>
