@@ -12,7 +12,7 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    router.push('/splash');
+    router.push('/intro');
   }, [router]);
 
   return null;

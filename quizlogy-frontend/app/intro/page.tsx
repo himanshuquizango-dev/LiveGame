@@ -7,6 +7,7 @@ import { visitorTrackingApi } from '@/lib/visitorTracking';
 import { HeadNav } from '@/components/headnav';
 import { QuestionCard } from '@/components/QuestionCard';
 import { QuizResultCard } from '@/components/QuizResultCard';
+import { RewardModal } from '@/components/RewardModal';
 import { WrongAnswerPopup } from '@/components/WrongAnswerPopup';
 import AdsenseAd from '@/components/AdsenseAd';
 import { Footer } from '@/components/Footer';
@@ -30,6 +31,7 @@ export default function IntroPage() {
   const [funfacts, setFunfacts] = useState<FunFact[]>([]);
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [showRewardModal, setShowRewardModal] = useState(false);
   const [coinsAwarded, setCoinsAwarded] = useState(0);
   const [isGuest, setIsGuest] = useState(false);
 
@@ -65,7 +67,7 @@ export default function IntroPage() {
 
   const fetchRandomQuestions = async () => {
     try {
-      setLoading(true);
+      setLoading(false);
 
       // Get user country code for intro questions (e.g. "IN", "US")
       let country: string | undefined;
@@ -214,7 +216,7 @@ export default function IntroPage() {
         // 3. The popup allows users to watch an ad to earn additional coins
         // 4. You can customize the popup behavior in handleWatchAd function
         setShowPopup(false);
-        setQuizCompleted(true);
+        setShowRewardModal(true); // Show reward modal instead
         // Save the current timestamp when intro is completed
         localStorage.setItem('introLastPlayed', Date.now().toString());
       }, 1000); // Show feedback for 1 second before showing results
@@ -260,6 +262,44 @@ export default function IntroPage() {
     setShowPopup(false);
   };
 
+  const handleClaimReward = async () => {
+    // Award bonus coins for watching ad/claiming reward
+    const bonusCoins = 100;
+
+    try {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        // Logged in user - award to account
+        await authApi.awardCoins(bonusCoins, 'Claimed reward from intro quiz');
+        const userData = await authApi.getCurrentUser();
+        localStorage.setItem('user', JSON.stringify(userData));
+      } else {
+        // Guest user - store in localStorage
+        const currentGuestCoins = parseInt(localStorage.getItem('guestCoins') || '0');
+        localStorage.setItem('guestCoins', (currentGuestCoins + bonusCoins).toString());
+      }
+      setCoinsAwarded(prev => prev + bonusCoins); // Add bonus to total
+    } catch (err) {
+      console.error('Error awarding bonus coins:', err);
+      // If API fails but user is guest, still award locally
+      if (!localStorage.getItem('user')) {
+        const currentGuestCoins = parseInt(localStorage.getItem('guestCoins') || '0');
+        localStorage.setItem('guestCoins', (currentGuestCoins + bonusCoins).toString());
+      }
+      setCoinsAwarded(prev => prev + bonusCoins); // Still award in UI even if API fails
+    }
+
+    // Close modal and show result card
+    setShowRewardModal(false);
+    setQuizCompleted(true);
+  };
+
+  const handleSkipReward = () => {
+    // Close modal and show result card without bonus
+    setShowRewardModal(false);
+    setQuizCompleted(true);
+  };
+
   const handlePlayAgain = () => {
     // Reset quiz state (but keep the shown question IDs to avoid showing same questions)
     setQuizCompleted(false);
@@ -287,7 +327,7 @@ export default function IntroPage() {
     />
 
     {/* First Advertisement - Above the fold, before quiz content */}
-    <div className="min-h-[291px] min-width-[490px] bg-[#2a334d] ">
+    <div className="bg-[#252F424D] min-h-[291px] min-width-[490px] ">
       <div className="w-full overflow-hidden ">
         <AdsenseAd adSlot="8153775072" adFormat="auto" />
       </div>
@@ -328,6 +368,14 @@ export default function IntroPage() {
           )}
         </div>
       ) : null}
+
+      {/* Reward Modal - Shows before result card */}
+      <RewardModal
+        isOpen={showRewardModal}
+        coinsAmount={100}
+        onClaim={handleClaimReward}
+        onClose={handleSkipReward}
+      />
 
 
       {!quizCompleted && (
@@ -379,12 +427,14 @@ export default function IntroPage() {
       )}
 
       {/* Second Advertisement - Between content sections for engagement */}
-      <div className="bg-[#2a334d] rounded-lg  mb-5 shadow-lg">
-        <div className="w-full overflow-hidden">
-          <AdsenseAd adSlot="8153775072" adFormat="auto" />
+      {!quizCompleted && (
+        <div className="bg-[#252F424D] rounded-lg  mb-5 shadow-lg">
+          <div className="w-full overflow-hidden">
+            <AdsenseAd adSlot="8153775072" adFormat="auto" />
+          </div>
+          <p className="text-center text-[#414d65] text-xs mt-2 mb-2 font-medium">A D V E R T I S E M E N T</p>
         </div>
-        <p className="text-center text-[#414d65] text-xs mt-2 mb-2 font-medium">A D V E R T I S E M E N T</p>
-      </div>
+      )}
 
 
       {!quizCompleted && (

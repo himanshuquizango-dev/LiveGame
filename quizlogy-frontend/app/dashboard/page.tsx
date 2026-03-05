@@ -6,6 +6,7 @@ import { DashboardNav } from '@/components/DashboardNav';
 import { QuizCard } from '@/components/QuizCard';
 import { ContestCard } from '@/components/ContestCard';
 import { PlayGamesSection } from '@/components/PlayGamesSection';
+import AdsenseAd from '@/components/AdsenseAd';
 import { SEOHead } from '@/components/SEOHead';
 import { contestsApi, Contest, categoriesApi, Category, getImageUrl, authApi, battlesApi, Battle } from '@/lib/api';
 import { isDailyContest, isDailyContestLive, getNextDailyStartTime } from '@/lib/dailyContestUtils';
@@ -438,6 +439,13 @@ export default function DashboardPage() {
         keywords="quiz dashboard, play quizzes, earn coins, daily quiz, quiz contests, quiz games, knowledge test"
       />
       <DashboardNav />
+
+            <div className="bg-[#252F424D]   mb-5 shadow-lg">
+              <div className="w-full overflow-hidden">
+                <AdsenseAd adSlot="8153775072" adFormat="auto" />
+              </div>
+              <p className="text-center text-[#414d65] text-xs mt-2 mb-2 font-medium">A D V E R T I S E M E N T</p>
+            </div>
       <div className="min-h-screen bg-[#172030]">
         <div className="max-w-md mx-auto px-3 pb-6 pt-1">
           {/* Top category tabs with left/right scroll buttons near edges */}

@@ -235,17 +235,21 @@ export default function ContestRulesPage() {
         keywords="contest rules, quiz rules, contest guidelines, quiz contest rules, contest instructions"
       />
       <DashboardNav />
-      <div className="min-h-screen flex flex-col bg-[#0D0009]" style={{
-        boxShadow: '0px 0px 2px 0px #FFF6D9'
-      }}>
+      <div className="min-h-screen flex flex-col bg-[#172031]">
         <div className="flex-1 pb-20 ">
           <div className="max-w-md mx-auto">
             {/* Welcome Section */}
-            <div className="text-center mb-6">
+            {/* <div className="text-center mb-6">
               <p className="text-yellow-400 text-lg font-bold mb-1">WELCOME</p>
               <p className="text-[#FFF6D9] text-md font-bold">{`QuizWala presents ${contest?.name}` || 'QUIZWALA'}</p>
-            </div>
-
+            </div> */}
+            {/* Advertisement Section - Between rules and action buttons for optimal visibility */}
+    <div className="min-h-[291px] min-width-[490px] mt-2 bg-[#2a334d] ">
+      <div className="w-full overflow-hidden ">
+        <AdsenseAd adSlot="8153775072" adFormat="auto" />
+      </div>
+      <p className="text-center text-[#414d65] text-xs mt-2 mb-2 font-medium">A D V E R T I S E M E N T</p>
+    </div>
             {/* Main Card */}
             <div className="bg-[#0D0009] rounded-xl p-4 mb-6 border border-[#FFF6D9]/20 mx-5" style={{
               boxShadow: '0px 0px 2px 0px #FFF6D9'
@@ -308,32 +312,29 @@ export default function ContestRulesPage() {
               </div>
             </div>
             </div>
-            {/* Advertisement Section - Between rules and action buttons for optimal visibility */}
-            <div className="bg-[#0D0009]   mb-5  border-b border-[#FFF6D9]/20  h-full" style={{
-              boxShadow: '0px 0px 2px 0px #FFF6D9'
-            }}>
-            <p className="text-center text-[#FFF6D9] text-sm mb-2">ADVERTISEMENT</p>
-            <AdsenseAd />
-          </div>
+
             {/* Rules Section */}
             <div className="m-5">
-              <h2 className="text-[#FFF6D9] text-lg font-bold mb-4">Rules are Simple:</h2>
-              <ul className="space-y-2 text-[#FFF6D9] text-sm">
+              <ul className="space-y-2 text-white text-sm">
                 <li className="flex items-start gap-2">
-                  <span className="text-[#FFF6D9] mt-1">•</span>
-                  <span>{totalQuestions} Questions, {totalSeconds} seconds. Right Answer +{positiveMarking}, Wrong Answer -{negativeMarking}.</span>
+                  <span className="text-white mt-1">•</span>
+                  <span>You got 200 seconds to answer all questions.</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-[#FFF6D9] mt-1">•</span>
-                  <span>{totalSeconds}-Seconds countdown for the quiz.</span>
+                  <span className="text-white mt-1">•</span>
+                  <span>Answer as many questions as you can.</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-[#FFF6D9] mt-1">•</span>
-                  <span>Winner is announced at the end of the quiz.</span>
+                  <span className="text-white mt-1">•</span>
+                  <span>For Every Correct answer you will get 100 points and will loose -50 points on every Incorrect answer.</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-[#FFF6D9] mt-1">•</span>
-                  <span>Winner gets bragging rights and their opponent's first born</span>
+                  <span className="text-white mt-1">•</span>
+                  <span>You can take help by using the lifelines present in the contest.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-white mt-1">•</span>
+                  <span>Lifelines can be used for free or by using a given amount of coins for each lifeline.</span>
                 </li>
               </ul>
             </div>
@@ -424,7 +425,7 @@ export default function ContestRulesPage() {
           </div>
         </div>
       </div>
-      <Footer />
+      {/* <Footer /> */}
 
       {/* Insufficient Coins Modal */}
       {showInsufficientCoinsModal && (

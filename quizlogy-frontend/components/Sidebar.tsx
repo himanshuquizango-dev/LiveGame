@@ -85,17 +85,18 @@ export const Sidebar = ({ isOpen, onClose, onReportIssueClick }: SidebarProps) =
       {/* Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 transition-opacity"
+          className="fixed  z-40 transition-opacity"
           onClick={onClose}
         />
       )}
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 h-full w-full sm:w-80 bg-[#172031] z-50 transform transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 h-full sm:w-80 bg-[#172031] z-50 transform transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : '-translate-y-full'
         }`}
         style={{
+          width: '395px',
           boxShadow: '0px 0px 2px 0px #FFF6D9'
         }}
       >
