@@ -1,13 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { DashboardNav } from '@/components/DashboardNav';
 import { QuizCard } from '@/components/QuizCard';
 import { ContestCard } from '@/components/ContestCard';
 import { PlayGamesSection } from '@/components/PlayGamesSection';
-import AdsenseAd from '@/components/AdsenseAd';
-import { Footer } from '@/components/Footer';
 import { SEOHead } from '@/components/SEOHead';
 import { contestsApi, Contest, categoriesApi, Category, getImageUrl, authApi, battlesApi, Battle } from '@/lib/api';
 import { isDailyContest, isDailyContestLive, getNextDailyStartTime } from '@/lib/dailyContestUtils';
@@ -90,6 +88,7 @@ export default function DashboardPage() {
   const [favoriteBattles, setFavoriteBattles] = useState<Set<string>>(new Set());
   const [contestsForYou, setContestsForYou] = useState<Contest[]>([]);
   const [trendingQuizzes, setTrendingQuizzes] = useState<Contest[]>([]);
+  const [allContests, setAllContests] = useState<Contest[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingBattles, setLoadingBattles] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -99,6 +98,8 @@ export default function DashboardPage() {
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   // Random playing counts assigned per load so live contests sort by "highest players" and order changes on refresh
   const [liveContestPlayerCounts, setLiveContestPlayerCounts] = useState<Record<string, number>>({});
+  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>('All');
+  const categoryTabsRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     fetchContests();
@@ -192,7 +193,8 @@ export default function DashboardPage() {
       // Sort by assigned playing count descending (highest players on top)
       const sortedLive = [...liveContests].sort((a, b) => (counts[b.id] ?? 0) - (counts[a.id] ?? 0));
 
-      setContestsForYou(sortedLive.slice(0, 5));
+      setAllContests(sortedLive);
+      setContestsForYou(sortedLive);
       setTrendingQuizzes(sortedLive.slice(0, 8));
     } catch (err) {
       console.error('Error fetching contests:', err);
@@ -403,6 +405,31 @@ export default function DashboardPage() {
     return 0;
   };
 
+  // Tabs at the top: "All" plus dynamic category names
+  const categoryTabs: string[] = [
+    'All',
+    ...Array.from(
+      new Set(
+        categories
+          .map((cat) => cat.name?.trim())
+          .filter((name): name is string => !!name && name.length > 0)
+      )
+    ),
+  ];
+
+  // Base contests list (all live contests we fetched)
+  const baseContests = allContests.length > 0 ? allContests : contestsForYou;
+
+  // Filter contests by selected category tab
+  const filteredContests: Contest[] =
+    selectedCategoryFilter === 'All'
+      ? baseContests
+      : baseContests.filter((contest) => {
+          const contestCategory = (contest.categoryName || contest.category || '').trim().toLowerCase();
+          const target = selectedCategoryFilter.trim().toLowerCase();
+          return contestCategory !== '' && contestCategory === target;
+        });
+
   return (
     <>
       <SEOHead 
@@ -411,138 +438,177 @@ export default function DashboardPage() {
         keywords="quiz dashboard, play quizzes, earn coins, daily quiz, quiz contests, quiz games, knowledge test"
       />
       <DashboardNav />
-      <div className="min-h-screen ">
-      {/* <div className="min-h-screen m-5"> */}
-        <div className="max-w-4xl mx-auto">
+      <div className="min-h-screen bg-[#172030]">
+        <div className="max-w-md mx-auto px-3 pb-6 pt-1">
+          {/* Top category tabs with left/right scroll buttons near edges */}
+          <div className="relative flex items-center mb-3 -mx-1">
+            <button
+              type="button"
+              onClick={() => {
+                if (categoryTabsRef.current) {
+                  categoryTabsRef.current.scrollBy({ left: -140, behavior: 'smooth' });
+                }
+              }}
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-transparent border border-[#64748b] flex items-center justify-center text-[#94a3b8] hover:border-[#94a3b8] hover:text-white"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
 
-
-          {/* First Advertisement - Above the fold, after Top Quizzes */}
-                <div className="w-full overflow-hidden">
-                  <AdsenseAd adSlot="8153775072" adFormat="auto" />
-          <p className="text-center text-xs text-[#414d64] font-semibold">A  D V E R T I S E M E N T</p>
-                </div>
-
-                      <div className="flex gap-3 overflow-x-auto pb-4 -mx-5 px-5 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-              {getTrendingCategories().map((category) => {
-                const categoryImageUrl = category.imageUrl || getImageUrl(category.imagePath || category.image || '');
-                const bgColor = category.backgroundColor || '#FFF6D9';
-
+            <div
+              ref={categoryTabsRef}
+              className="flex-1 flex items-center gap-1.5 overflow-x-auto hide-scrollbar px-8"
+            >
+              {categoryTabs.map((label) => {
+                const isActive = selectedCategoryFilter === label;
                 return (
-                  <div
-                    key={category.id}
-                    onClick={() => router.push(`/category/${encodeURIComponent(category.name)}?id=${category.id}`)}
-                    className="flex-shrink-0 cursor-pointer hover:scale-[1.02] transition-transform shadow-lg flex flex-col items-center justify-center rounded-2xl overflow-hidden"
-                    style={{
-                      padding: '10px'
-                    }}
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => setSelectedCategoryFilter(label)}
+                    className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold border transition-all flex-shrink-0 ${
+                      isActive
+                        ? 'bg-[#172030] text-[#ffb540] border-[#ffb540]'
+                        : 'bg-transparent text-[#e2e8f0] border-[#334155] hover:text-white hover:border-[#475569]'
+                    }`}
                   >
-                    <p className="text-white font-bold text-[10px] text-center leading-tight w-full truncate">
-                      {category.name}
-                    </p>
-                  </div>
+                    {label.toUpperCase()}
+                  </button>
                 );
               })}
             </div>
-          {/* Quiz Contests For You Section - First 2 Contests */}
-          <div className="mb-8 m-5">
-            <div className="flex justify-between items-center mb-6">
-              <h1 className="text-white text-xl font-bold">Quiz Contests For You</h1>
-              <button
-                onClick={() => router.push('/all-categories')}
-                className="text-white underline hover:text-gray-300 transition-colors text-sm"
-              >
-                SEE ALL
-              </button>
-            </div>
 
-            {/* First 2 Contests */}
+            <button
+              type="button"
+              onClick={() => {
+                if (categoryTabsRef.current) {
+                  categoryTabsRef.current.scrollBy({ left: 140, behavior: 'smooth' });
+                }
+              }}
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-transparent border border-[#64748b] flex items-center justify-center text-[#94a3b8] hover:border-[#94a3b8] hover:text-white"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Contests list */}
+          <div className="space-y-2">
+            {loading && (
+              <div className="text-center text-[#E5E7EB] py-8 text-sm">Loading contests...</div>
+            )}
+
+            {error && !loading && (
+              <div className="text-center text-red-400 py-8 text-sm">{error}</div>
+            )}
+
             {!loading && !error && (
               <>
-                {contestsForYou.length === 0 ? (
-                  <div className="text-center text-white py-12">
-                    <div className="text-lg">No contests available</div>
+                {filteredContests.length === 0 ? (
+                  <div className="text-center text-[#E5E7EB] py-8 text-sm">
+                    No contests available for this category.
                   </div>
                 ) : (
-                  <div className="space-y-4">
-                    {contestsForYou.slice(0).map((contest) => (
-                      <ContestCard
-                        key={contest.id}
-                        contest={contest}
-                        playerCount={getPlayerCount(contest)}
-                        onPlayClick={() => handlePlayClick(contest.id)}
-                      />
-                    ))}
-                  </div>
+                  <>
+                    {filteredContests.map((contest) => {
+                      const mainCategory =
+                        (contest.categoryName || contest.category || '').trim() || 'Quiz';
+                      const subLabel = contest.name && contest.name !== mainCategory ? contest.name : '';
+                      const categoryLine = subLabel ? `${mainCategory} | ${subLabel}` : mainCategory;
+                      const prizeText =
+                        contest.winCoins && contest.winCoins > 0
+                          ? `Play and Win ${contest.winCoins.toLocaleString()}`
+                          : contest.name || 'Play and Win';
+                      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
+                      return (
+                        <button
+                          key={contest.id}
+                          type="button"
+                          onClick={() => handlePlayClick(contest.id)}
+                          className="w-full flex items-center gap-3 rounded-2xl bg-[#1e2a3a] px-4 py-3 border border-[#2a3648] hover:border-[#3d4d63] transition-colors text-left"
+                        >
+                          {/* Left: contest image */}
+                          <div className="flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden flex items-center justify-center">
+                            {contest.contestImage ? (
+                              <img
+                                src={getImageUrl(contest.contestImage)}
+                                alt={contest.name}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  const img = e.currentTarget as HTMLImageElement;
+                                  const triedCategories = img.dataset.triedCategories === 'true';
+                                  const triedContests = img.dataset.triedContests === 'true';
+                                  const filename = contest.contestImage;
+                                  if (filename && !filename.includes('/')) {
+                                    if (img.src.includes('/uploads/contests/') && !triedCategories) {
+                                      img.dataset.triedContests = 'true';
+                                      img.dataset.triedCategories = 'true';
+                                      img.src = `${baseUrl}/uploads/categories/${filename}`;
+                                    } else if (img.src.includes('/uploads/categories/') && !triedContests) {
+                                      img.dataset.triedCategories = 'true';
+                                      img.dataset.triedContests = 'true';
+                                      img.src = `${baseUrl}/uploads/contests/${filename}`;
+                                    } else {
+                                      img.style.display = 'none';
+                                      const fallback = img.nextElementSibling as HTMLElement;
+                                      if (fallback) fallback.classList.remove('hidden');
+                                    }
+                                  } else {
+                                    img.style.display = 'none';
+                                    const fallback = img.nextElementSibling as HTMLElement;
+                                    if (fallback) fallback.classList.remove('hidden');
+                                  }
+                                }}
+                              />
+                            ) : null}
+                            <div className={`w-full h-full rounded-xl bg-gradient-to-br from-cyan-400 via-blue-500 to-violet-500 flex items-center justify-center ${contest.contestImage ? 'hidden' : ''}`}>
+                              <span className="text-white/90 text-lg font-bold">?</span>
+                            </div>
+                          </div>
+
+                          {/* Middle text */}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs text-[#94a3b8] font-medium truncate leading-tight">
+                              {categoryLine}
+                            </p>
+                            <p className="text-base font-semibold text-white truncate leading-tight mt-0.5">
+                              {prizeText}
+                            </p>
+                            <div className="inline-flex items-center gap-1.5 mt-1.5 rounded-full bg-[#172030] px-2 py-1">
+                              <span className="text-xs text-[#94a3b8]">Entry Fee</span>
+                              <img src="/coin2.svg" alt="" className="w-4 h-4 object-contain" />
+                              <span className="text-xs font-semibold text-white">
+                                {contest.joining_fee.toLocaleString()}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Play button */}
+                          <div className="flex-shrink-0">
+                            <div className="w-12 h-12 rounded-full bg-[#ffb540] flex items-center justify-center active:scale-95 transition-transform">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                className="w-6 h-6 text-white ml-0.5"
+                                fill="currentColor"
+                              >
+                                <path d="M8 5v14l11-7z" />
+                              </svg>
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </>
                 )}
               </>
             )}
           </div>
-
-          {/* Play Games Section */}
-
-          {/* Remaining Quiz Contests For You */}
-          {/* {!loading && !error && contestsForYou.length > 2 && (
-            <div className="mb-8 m-5">
-              <div className="space-y-4">
-                {contestsForYou.slice(0).map((contest) => (
-                  <ContestCard
-                    key={contest.id}
-                    contest={contest}
-                    playerCount={getPlayerCount(contest)}
-                    onPlayClick={() => handlePlayClick(contest.id)}
-                  />
-                ))}
-              </div>
-            </div>
-          )} */}
-
-          {/* Second Advertisement - Between content sections for maximum visibility */}
-          {/* <div className="bg-[#2C2159] rounded-lg p-4 mb-8 shadow-lg">
-            <p className="text-center text-[#7563C0] text-xs mb-2 font-medium">ADVERTISEMENT</p>
-            <div className="w-full overflow-hidden">
-              <AdsenseAd adSlot="1314351516" adFormat="auto" />
-            </div>
-          </div> */}
-
-          {/* Quiz Bite Section */}
-
-          {/* Trending Quiz Topics Section */}
-          <div className="mb-8 m-5">
-            <div className="flex justify-between items-center mb-6">
-            </div>
-
-            {/* Trending Category Cards */}
-            {/* <div className="flex gap-3 overflow-x-auto pb-4 -mx-5 px-5 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-              {getTrendingCategories().map((category) => {
-                const categoryImageUrl = category.imageUrl || getImageUrl(category.imagePath || category.image || '');
-                const bgColor = category.backgroundColor || '#FFF6D9';
-
-                return (
-                  <div
-                    key={category.id}
-                    onClick={() => router.push(`/category/${encodeURIComponent(category.name)}?id=${category.id}`)}
-                    className="flex-shrink-0 cursor-pointer hover:scale-[1.02] transition-transform shadow-lg flex flex-col items-center justify-center rounded-2xl overflow-hidden"
-                    style={{
-                      width: '100px',
-                      height: '100px',
-                      padding: '10px'
-                    }}
-                  >
-                    <p className="text-[#0D0009] font-bold text-[10px] text-center leading-tight w-full truncate">
-                      {category.name}
-                    </p>
-                  </div>
-                );
-              })}
-            </div> */}
-          </div>
-
-          
         </div>
-        
       </div>
-      {/* Footer */}
-      {/* <Footer /> */}
 
       {/* Category Selection Modal */}
       {showCategoryModal && (
