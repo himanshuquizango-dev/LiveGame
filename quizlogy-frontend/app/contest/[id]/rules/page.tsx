@@ -235,21 +235,16 @@ export default function ContestRulesPage() {
         keywords="contest rules, quiz rules, contest guidelines, quiz contest rules, contest instructions"
       />
       <DashboardNav />
-      <div className="min-h-screen flex flex-col bg-[#172031]">
-        <div className="flex-1 pb-20 ">
-          <div className="max-w-md mx-auto">
-            {/* Welcome Section */}
-            {/* <div className="text-center mb-6">
-              <p className="text-yellow-400 text-lg font-bold mb-1">WELCOME</p>
-              <p className="text-[#FFF6D9] text-md font-bold">{`QuizWala presents ${contest?.name}` || 'QUIZWALA'}</p>
-            </div> */}
             {/* Advertisement Section - Between rules and action buttons for optimal visibility */}
-            <div className="min-h-[291px] min-width-[490px] mt-2 bg-[#2a334d] ">
+            <div className=" mt-2 bg-[#252F424D] ">
               <div className="w-full overflow-hidden ">
                 <AdsenseAd adSlot="8153775072" adFormat="auto" />
               </div>
               <p className="text-center text-[#414d65] text-xs mt-2 mb-2 font-medium">A D V E R T I S E M E N T</p>
             </div>
+      <div className="min-h-screen flex flex-col bg-[#172031]">
+        <div className="flex-1 ">
+          <div>
             {/* Main Card */}
             <div className=" rounded-md p-4 mb-6 border border-[#FFF6D9]/20 mx-5">
               <div className="flex items-start gap-3">
@@ -317,25 +312,25 @@ export default function ContestRulesPage() {
                 </div>
               </div>
 
-              <div className="max-w-md mx-auto p-5 pb-8 relative z-50">
-                <div className="flex flex-col gap-4 relative z-50">
+              <div className="max-w-md mx-auto pt-4 pb-4  relative z-50">
+                <div className="flex flex-col gap-2 relative z-50">
                   <button
+                  style={{width: '185px',height: '36px', margin:'auto'}}
                     onClick={handleJoinQuizwala}
-                    className="w-full h-[56px] bg-yellow-400 text-[#0D0009] rounded-full font-bold text-lg hover:bg-yellow-500 transition-colors shadow-lg relative overflow-hidden z-50"
-                    style={{ position: 'relative', zIndex: 50 }}
+                    className=" bg-[#FFB540] text-white rounded-full font-semibold hover:bg-transparent hover:border-2 hover:border-[#FFB540] hover:text-[#FFB540]"
                   >
-                    <span className="relative z-10">Join Now</span>
+                    <span className="relative z-10 underline">Join Now</span>
                   </button>
 
                   <div className="text-center">
-                    <p className="text-[#FFF6D9] font-semibold">Or</p>
+                    <p className="text-white font-semibold">Or</p>
                   </div>
 
                   <button
+                  style={{width: '185px',height: '36px', margin:'auto'}}
                     onClick={handlePlayAsGuest}
                     disabled={joining}
-                    className="w-full h-[56px] bg-transparent border-2 border-[#FFF6D9] text-[#FFF6D9] rounded-full font-semibold hover:bg-[#FFF6D9]/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed relative z-50"
-                    style={{ position: 'relative', zIndex: 50 }}
+                    className=" bg-[#FFB540] text-white rounded-full font-semibold hover:bg-transparent hover:border-2 hover:border-[#FFB540] hover:text-[#FFB540] underline"
                   >
                     {joining ? 'Starting...' : 'Play as Guest'}
                   </button>
@@ -343,7 +338,7 @@ export default function ContestRulesPage() {
               </div>
 
               <div className="m-5">
-                <ul className="space-y-2 text-white text-sm">
+                <ul className=" text-white text-sm">
                   <li className="flex items-start gap-2">
                     <span className="text-white mt-1">•</span>
                     <span>You got 200 seconds to answer all questions.</span>
@@ -369,8 +364,7 @@ export default function ContestRulesPage() {
             </div>
           </div>
         </div>
-      </div>
-      {/* <Footer /> */}
+      </div> 
 
       {/* Insufficient Coins Modal */}
       {showInsufficientCoinsModal && (
