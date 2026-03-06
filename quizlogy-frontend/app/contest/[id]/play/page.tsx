@@ -9,6 +9,7 @@ import { authApi, User, contestsApi, Contest, getImageUrl } from '@/lib/api';
 import { isDailyContest, isDailyContestLive } from '@/lib/dailyContestUtils';
 import { ContestCard } from '@/components/ContestCard';
 import AdsenseAd from '@/components/AdsenseAd';
+import {QuizResultCard} from '@/components/QuizResultCard';
 
 interface ContestQuestion {
   id: string;
@@ -52,6 +53,8 @@ export default function ContestPlayPage() {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [answers, setAnswers] = useState<AnswerResult[]>([]);
   const [score, setScore] = useState(0);
+  const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [incorrectAnswers, setIncorrectAnswers] = useState(0);
   const [totalTimeRemaining, setTotalTimeRemaining] = useState(0); // Total time for entire contest
   const [quizStarted, setQuizStarted] = useState(false);
   const [quizCompleted, setQuizCompleted] = useState(false);
@@ -391,7 +394,7 @@ export default function ContestPlayPage() {
       const response = await contestsApi.getContestById(contestId);
       if (response.status && response.data) {
         const contestData = response.data;
-        const contestDuration = contestData.duration || 60; // Total duration for entire contest
+        const contestDuration = (contestData.duration || 60); // Total duration for entire contest
         const allQuestions = contestData.questions || [];
         const questionCount = contestData.contest_question_count || allQuestions.length;
 
@@ -709,6 +712,7 @@ export default function ContestPlayPage() {
     // Update score and track consecutive correct answers
     if (answerResult.isCorrect) {
       setScore((prev) => prev + (contest?.marking || 25));
+      setCorrectAnswers((prev) => prev + 1);
       const newConsecutive = consecutiveCorrect + 1;
       setConsecutiveCorrect(newConsecutive);
 
@@ -731,6 +735,7 @@ export default function ContestPlayPage() {
     } else {
       // Reset consecutive correct counter on wrong answer
       setConsecutiveCorrect(0);
+      setIncorrectAnswers((prev) => prev + 1);
 
       // Play wrong sound for every wrong answer (only if not muted)
       if (wrongSoundRef.current && !isMuted) {
@@ -1189,7 +1194,7 @@ export default function ContestPlayPage() {
               </p>
 
               <button
-                style={{ width: '300px', height: '36px'}}
+                style={{ width: '300px', height: '36px' }}
                 onClick={() => router.push('/dashboard')}
                 className="bg-[#FFB540] text-white rounded-md font-semibold hover:bg-transparent hover:border-2 hover:border-[#FFB540] hover:text-[#FFB540]"
               >
@@ -1224,368 +1229,139 @@ export default function ContestPlayPage() {
       />
       {audioElements}
       <DashboardNav />
-      <div className="min-h-screen p-5 pb-20 bg-[#0D0009]" style={{
+      <div className="min-h-screen p-5 pb-20 bg-[#172031]" style={{
         // boxShadow: '0px 0px 2px 0px #FFF6D9'
       }}>
         <div className="max-w-md mx-auto ">
           {/* Header */}
           {quizStarted && (
             <div className="text-center mb-4">
-              <p className="text-[#FFF6D9] text-lg font-bold mb-1">{contest?.name || 'Brain Test'}</p>
-              <p className="text-[#FFF6D9] text-base mb-2">Play And Win</p>
+              <p className="text-[#FFB540] text-lg font-bold mb-1">{contest?.name || 'Brain Test'}</p>
+              <div className="flex-1 min-w-0 justify-center items-center gap-2 flex">
+                <p className="text-white flex items-center gap-1 whitespace-nowrap">
+                  Play & WinCoin
+
+                  <svg
+                    stroke="currentColor"
+                    fill="currentColor"
+                    strokeWidth="0"
+                    viewBox="0 0 24 24"
+                    className="text-[#FFB540]"
+                    height="1em"
+                    width="1em"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M12 10c3.976 0 8-1.374 8-4s-4.024-4-8-4-8 1.374-8 4 4.024 4 8 4z"></path>
+                    <path d="M4 10c0 2.626 4.024 4 8 4s8-1.374 8-4V8c0 2.626-4.024 4-8 4s-8-1.374-8-4v2z"></path>
+                    <path d="M4 14c0 2.626 4.024 4 8 4s8-1.374 8-4v-2c0 2.626-4.024 4-8 4s-8-1.374-8-4v2z"></path>
+                    <path d="M4 18c0 2.626 4.024 4 8 4s8-1.374 8-4v-2c0 2.626-4.024 4-8 4s-8-1.374-8-4v2z"></path>
+                  </svg>
+
+                  {(contest?.winCoins || 24000).toLocaleString()}
+                </p>
+              </div>
               <div className="flex items-center justify-center gap-2">
-                <img src="/coin.svg" alt="Coins" className="w-5 h-5" />
-                <span className="text-yellow-400 text-xl font-bold">{(contest?.winCoins || 24000).toLocaleString()}</span>
-                <span className="text-[#FFF6D9] text-lg">COINS</span>
               </div>
             </div>
           )}
           {/* Timer */}
           {quizStarted ? (
             <>
-              {/* Mute Button */}
-              <div className="flex justify-end mb-2 animate-slide-in-down">
-                <button
-                  onClick={toggleMute}
-                  className="bg-[#0D0009] hover:bg-[#0D0009]/80 rounded-full p-2 transition-all duration-300 hover:scale-110 border border-[#FFF6D9]/30"
-                  aria-label={isMuted ? 'Unmute' : 'Mute'}
-                >
-                  {(() => {
-                    // Show unmuted icon (sound on) when music is actually playing
-                    const showUnmuted = !isMuted && isMusicPlaying;
+              {/* Main Container with overlapping Timer */}
+              <div className="relative pt-10">
+                {/* Timer - Centered and overlapping the top border */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 z-10">
+                  <div className="relative w-24 h-24 bg-[#1F2937] rounded-full flex items-center justify-center shadow-lg">
+                    {/* SVG Progress Ring */}
+                    <svg className="absolute top-0 left-0 w-full h-full -rotate-90">
+                      <circle
+                        cx="48"
+                        cy="48"
+                        r="44" // Adjusted radius to fit inside the 24w container (96px)
+                        stroke="currentColor"
+                        strokeWidth="6"
+                        fill="transparent"
+                        className="text-gray-700" // Background of the ring
+                      />
+                      <circle
+                        cx="48"
+                        cy="48"
+                        r="44"
+                        stroke="currentColor"
+                        strokeWidth="6"
+                        fill="transparent"
+                        strokeDasharray={2 * Math.PI * 44}
+                        strokeDashoffset={
+                          2 * Math.PI * 44 - (totalTimeRemaining / (contest?.duration || 1)) * (2 * Math.PI * 44)
+                        }
+                        strokeLinecap="round"
+                        className="text-yellow-500 transition-all duration-1000 ease-linear"
+                      />
+                    </svg>
 
-                    return showUnmuted ? (
-                      <svg className="w-6 h-6 text-[#FFF6D9]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                      </svg>
-                    ) : (
-                      <svg className="w-6 h-6 text-[#FFF6D9]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
-                      </svg>
-                    );
-                  })()}
-                </button>
-              </div>
-
-              {/* Question Card and Answer Options Container */}
-              <div className="bg-[#FFF6D9] rounded-xl p-4 mb-4 animate-fade-in border border-[#BFBAA7]" style={{
-                boxShadow: '0px 0px 2px 0px #FFF6D9'
-              }}>
-                {/* Timer */}
-                <div className="flex items-center justify-center mb-3">
-                  <div className={`w-28 h-28 bg-white rounded-full border-4 ${totalTimeRemaining <= 10 ? 'border-red-500' : 'border-pink-500'} flex flex-col items-center justify-center ${totalTimeRemaining <= 10 ? 'animate-timer-countdown' : ''}`}>
-                    <span className="text-black text-4xl font-bold leading-tight animate-number-count">{totalTimeRemaining}</span>
-                    <span className="text-black text-sm">Seconds</span>
+                    {/* Timer Text */}
+                    <span className="relative z-10 text-white text-3xl font-bold">
+                      {Math.floor(totalTimeRemaining / 60)}:{String(totalTimeRemaining % 60).padStart(2, '0')}
+                    </span>
                   </div>
                 </div>
-                <div className="text-center text-black mb-4 text-sm animate-fade-in">
-                  Question {currentQuestionIndex + 1}/{totalQuestions}
-                </div>
 
-                {/* Question Card */}
+                {/* Question Card and Answer Options Container */}
+                <div className="bg-[#2D3748] rounded-3xl p-4 shadow-2xl">
+                  <div className="flex items-center justify-between mb-6">
+                    {/* Correct Score */}
+                    <div className="w-12 h-12 bg-[#2E7D32] rounded-full flex items-center justify-center shadow-inner">
+                      <span className="text-white text-xl font-semibold">{correctAnswers}</span>
+                    </div>
 
-                <div className=" rounded-lg p-2 mb-1 animate-question-slide-in flex flex-col items-center">
-                  <p className="text-black justify-center text-center font-bold text-base leading-relaxed mb-3 sm:mb-4">{currentQuestion.question}</p>
-                  {currentQuestion.type === 'IMAGE' && currentQuestion.media && (
-                    (() => {
-                      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
-                      let imageUrl = '';
+                    {/* Incorrect Score */}
+                    <div className="w-12 h-12 bg-[#C62828] rounded-full flex items-center justify-center shadow-inner">
+                      <span className="text-white text-xl font-semibold">{-Math.abs(incorrectAnswers)}</span>
+                    </div>
+                  </div>
 
-                      // Handle different media path formats
-                      if (currentQuestion.media.startsWith('http://') || currentQuestion.media.startsWith('https://')) {
-                        imageUrl = currentQuestion.media;
-                      } else if (currentQuestion.media.includes('/')) {
-                        // Full path from backend - preserve it exactly
-                        imageUrl = `${baseUrl}/${currentQuestion.media}`;
-                      } else {
-                        // Just filename - try question media path first (most common for contest questions)
-                        imageUrl = `${baseUrl}/uploads/questions/contest/${currentQuestion.media}`;
+                  {/* Question Number Pill */}
+                  <div className="flex justify-center mb-8">
+                    <span className="bg-[#1A202C] text-white px-6 py-2 rounded-full text-lg ">
+                      Question {currentQuestionIndex + 1}/{totalQuestions}
+                    </span>
+                  </div>
+
+                  {/* Question Text */}
+                  <div className="mb-4">
+                    <h2 className="text-white text-center text-xl ">
+                      {currentQuestion.question}
+                    </h2>
+                  </div>
+
+                  {/* Answer Options Grid */}
+                  <div className="grid grid-cols-2 gap-4">
+                    {currentQuestion.options.map((option, index) => {
+                      const isSelected = selectedAnswer === option;
+                      const isCorrect = option === currentQuestion.correctOption;
+                      const showResult = selectedAnswer !== null;
+
+                      let bgColor = 'bg-[#1A202C] hover:bg-[#E9B44C]';
+                      let textColor = 'text-white';
+
+                      if (showResult) {
+                        if (isCorrect) bgColor = 'bg-[#2E7D32]';
+                        else if (isSelected) bgColor = 'bg-[#C62828]';
                       }
 
                       return (
-                        <img
-                          src={imageUrl}
-                          alt="Question image"
-                          className="max-w-full max-h-48 sm:max-h-64 md:max-h-80 rounded-xl object-contain"
-                          onError={(e) => {
-                            const img = e.currentTarget;
-                            const mediaPath = currentQuestion.media;
-                            const triedFallback = (img as any).dataset.triedFallback === 'true';
-
-                            if (!triedFallback && mediaPath && !mediaPath.includes('/')) {
-                              // Try alternative path
-                              (img as any).dataset.triedFallback = 'true';
-                              if (img.src.includes('/uploads/questions/contest/')) {
-                                img.src = `${baseUrl}/uploads/contests/${mediaPath}`;
-                              } else if (img.src.includes('/uploads/contests/')) {
-                                img.src = `${baseUrl}/uploads/questions/contest/${mediaPath}`;
-                              } else {
-                                img.style.display = 'none';
-                              }
-                            } else {
-                              // Hide image if all attempts failed
-                              img.style.display = 'none';
-                            }
-                          }}
-                        />
-                      );
-                    })()
-                  )}
-                  {currentQuestion.type === 'VIDEO' && currentQuestion.media && (
-                    (() => {
-                      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
-                      let videoUrl = '';
-
-                      if (currentQuestion.media.startsWith('http://') || currentQuestion.media.startsWith('https://')) {
-                        videoUrl = currentQuestion.media;
-                      } else if (currentQuestion.media.includes('/')) {
-                        videoUrl = `${baseUrl}/${currentQuestion.media}`;
-                      } else {
-                        videoUrl = `${baseUrl}/uploads/questions/contest/${currentQuestion.media}`;
-                      }
-
-                      return (
-                        <video
-                          src={videoUrl}
-                          controls
-                          className="max-w-full max-h-48 sm:max-h-64 md:max-h-80 rounded-xl object-contain"
-                          onError={(e) => {
-                            const video = e.currentTarget;
-                            const mediaPath = currentQuestion.media;
-                            const triedFallback = (video as any).dataset.triedFallback === 'true';
-
-                            if (!triedFallback && mediaPath && !mediaPath.includes('/')) {
-                              (video as any).dataset.triedFallback = 'true';
-                              if (video.src.includes('/uploads/questions/contest/')) {
-                                video.src = `${baseUrl}/uploads/contests/${mediaPath}`;
-                              } else {
-                                video.style.display = 'none';
-                              }
-                            } else {
-                              video.style.display = 'none';
-                            }
-                          }}
+                        <button
+                          key={index}
+                          onClick={() => handleAnswerSelect(option)}
+                          disabled={showResult}
+                          className={`${bgColor} ${textColor} rounded-md p-2 text-md`}
                         >
-                          Your browser does not support the video tag.
-                        </video>
-                      );
-                    })()
-                  )}
-                  {currentQuestion.type === 'AUDIO' && currentQuestion.media && (
-                    (() => {
-                      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
-                      let audioUrl = '';
-
-                      if (currentQuestion.media.startsWith('http://') || currentQuestion.media.startsWith('https://')) {
-                        audioUrl = currentQuestion.media;
-                      } else if (currentQuestion.media.includes('/')) {
-                        audioUrl = `${baseUrl}/${currentQuestion.media}`;
-                      } else {
-                        audioUrl = `${baseUrl}/uploads/questions/contest/${currentQuestion.media}`;
-                      }
-
-                      return (
-                        <audio
-                          src={audioUrl}
-                          controls
-                          className="w-full max-w-md"
-                          onError={(e) => {
-                            const audio = e.currentTarget;
-                            const mediaPath = currentQuestion.media;
-                            const triedFallback = (audio as any).dataset.triedFallback === 'true';
-
-                            if (!triedFallback && mediaPath && !mediaPath.includes('/')) {
-                              (audio as any).dataset.triedFallback = 'true';
-                              if (audio.src.includes('/uploads/questions/contest/')) {
-                                audio.src = `${baseUrl}/uploads/contests/${mediaPath}`;
-                              } else {
-                                audio.style.display = 'none';
-                              }
-                            } else {
-                              audio.style.display = 'none';
-                            }
-                          }}
-                        >
-                          Your browser does not support the audio tag.
-                        </audio>
-                      );
-                    })()
-                  )}
-                </div>
-
-                {/* Answer Options */}
-                <div className="grid grid-cols-2 gap-3 text-center ">
-                  {currentQuestion.options.map((option, index) => {
-                    const isSelected = selectedAnswer === option;
-                    const isCorrect = option === currentQuestion.correctOption;
-                    const showResult = selectedAnswer !== null;
-                    const showAudiencePoll = activeAudiencePoll;
-                    const isRemovedByFiftyFifty = activeFiftyFifty && removedOptions.includes(option);
-
-                    let bgColor = 'bg-white';
-                    let textColor = 'text-black';
-                    let pollBarColor = '';
-                    let showThumbsUp = false;
-                    let pollBarWidth = 'w-[22%]';
-                    let textMarginLeft = 'ml-[22%]';
-                    let pollPercentage = 0;
-
-
-                    if (showAudiencePoll) {
-                      // During audience poll animation - white background with colored bars
-                      bgColor = 'bg-white';
-                      textColor = 'text-black';
-
-                      // Get the percentage for this option (fluctuating)
-                      pollPercentage = audiencePollPercentages[option] || (isCorrect ? 45 : 15);
-                      pollBarWidth = `w-[${pollPercentage}%]`;
-                      textMarginLeft = `ml-[${pollPercentage}%]`;
-
-                      if (isCorrect) {
-                        pollBarColor = 'bg-green-400'; // Bright green bar for correct answer
-                        showThumbsUp = true;
-                      } else {
-                        pollBarColor = 'bg-purple-300'; // Light purple bar for incorrect answers
-                      }
-                    } else if (showResult) {
-                      // After answer is selected
-                      if (isCorrect) {
-                        bgColor = 'bg-green-500 animate-correct-answer';
-                        textColor = 'text-white border-1 border-gray-300';
-                      } else if (isSelected && !isCorrect) {
-                        bgColor = 'bg-red-500 animate-wrong-answer border-1 border-red-700';
-                        textColor = 'text-white';
-                      } else {
-                        bgColor = 'bg-white border-1 border-gray-300';
-                        textColor = 'text-black';
-                      }
-                    } else {
-                      // Default state
-                      bgColor = 'bg-white';
-                      textColor = 'text-black';
-                    }
-
-                    return (
-                      <button
-                        key={`${currentQuestionIndex}-${index}`}
-                        onClick={() => handleAnswerSelect(option)}
-                        disabled={selectedAnswer !== null || !quizStarted || totalTimeRemaining <= 0 || isRemovedByFiftyFifty}
-                        className={`${bgColor} ${textColor} rounded-xl p-4 font-medium disabled:opacity-50 transition-all duration-300 relative overflow-hidden flex items-center justify-center gap-2 border-2 border-gray-400 ${isRemovedByFiftyFifty ? 'cursor-not-allowed' : ''}`}
-                      >
-                        {showAudiencePoll && (
-                          <div
-                            className={`${pollBarColor} h-full absolute left-0 top-0 animate-audience-poll transition-all duration-300`}
-                            style={{ width: `${pollPercentage}%` }}
-                          />
-                        )}
-                        <span className={`${showAudiencePoll ? 'relative z-10' : ''} flex-1 text-center ${isRemovedByFiftyFifty ? 'opacity-0' : ''}`}>
                           {option}
-                          {showAudiencePoll && (
-                            <span className="ml-2 text-xs opacity-80">
-                              {Math.round(pollPercentage)}%
-                            </span>
-                          )}
-                        </span>
-                        {showAudiencePoll && showThumbsUp && (
-                          <span className="text-yellow-400 text-xl">👍</span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {/* Lifelines Section - Show inline when opened */}
-                {showingLifelineSelection && (
-                  <>
-                    {/* Lifeline Options */}
-                    <div className="grid grid-cols-4 gap-3 mb-4">
-                      {/* 50/50 Lifeline */}
-                      <div className="mt-4 flex flex-col items-center justify-center">
-                        <button
-                          onClick={() => {
-                            setShowingLifelineSelection(false);
-                            handleLifeline('fifty-fifty');
-                          }}
-                          disabled={lifelineUsedThisQuestion || usedLifelines.has('fifty-fifty')}
-                          className="w-12 h-12 rounded-lg bg-black flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <img src="/fifty-fifty.svg" alt="50/50" className="w-8 h-8" />
                         </button>
-                        <span className="text-[#0D0009] text-xs font-medium mt-2">50/50</span>
-                      </div>
-
-                      {/* Audience Poll Lifeline */}
-                      <div className="mt-4 flex flex-col items-center justify-center">
-                        <button
-                          onClick={() => {
-                            setShowingLifelineSelection(false);
-                            handleLifeline('audience');
-                          }}
-                          disabled={lifelineUsedThisQuestion || usedLifelines.has('audience')}
-                          className="w-12 h-12 rounded-lg bg-black flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <img src="/audience.svg" alt="Audience" className="w-6 h-6" />
-                        </button>
-                        <span className="text-[#0D0009] text-xs font-medium mt-2">Audience</span>
-                      </div>
-
-                      {/* Freeze Timer Lifeline */}
-                      <div className="mt-4 flex flex-col items-center justify-center">
-                        <button
-                          onClick={() => {
-                            setShowingLifelineSelection(false);
-                            handleLifeline('freeze');
-                          }}
-                          disabled={lifelineUsedThisQuestion || usedLifelines.has('freeze')}
-                          className="w-12 h-12 rounded-lg bg-black flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <img src="/freeze.svg" alt="Freeze" className="w-6 h-6" />
-                        </button>
-                        <span className="text-[#0D0009] text-xs font-medium mt-2">Freeze</span>
-                      </div>
-
-                      {/* Flip Question Lifeline */}
-                      <div className="mt-4 flex flex-col items-center justify-center">
-                        <button
-                          onClick={() => {
-                            setShowingLifelineSelection(false);
-                            handleLifeline('flip');
-                          }}
-                          disabled={lifelineUsedThisQuestion || usedLifelines.has('flip')}
-                          className="w-12 h-12 rounded-lg bg-black flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <img src="/flip.svg" alt="Flip" className="w-6 h-6" />
-                        </button>
-                        <span className="text-[#0D0009] text-xs font-medium mt-2">Flip</span>
-                      </div>
-                    </div>
-
-                    {/* Close Button */}
-                    <div className="flex items-center justify-center">
-                      <button
-                        onClick={() => setShowingLifelineSelection(false)}
-                        className="w-[100px] bg-[#FFF6D9] text-[#0D0009] rounded-full p-4 mb-4 font-bold border border-[#BFBAA7]"
-                      >
-                        CLOSE
-                      </button>
-                    </div>
-                  </>
-                )}
-
-                {/* Use Lifeline Button - Show when modal is closed */}
-                {!showingLifelineSelection && (
-                  <div className="flex items-center justify-center">
-                    <button
-                      onClick={() => setShowingLifelineSelection(true)}
-                      disabled={!quizStarted || lifelineUsedThisQuestion}
-                      className="bg-[#FFF6D9] text-[#0D0009] rounded-full p-4 mt-4 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg animate-bounce-cute border border-[#BFBAA7]"
-                    >
-                      <img src="/lifeline.svg" alt="Lifeline" className="w-6 h-6" />
-                      <span>USE A LIFELINE</span>
-                    </button>
+                      );
+                    })}
                   </div>
-                )}
+                </div>
               </div>
             </>
           ) : null}
@@ -1593,78 +1369,17 @@ export default function ContestPlayPage() {
           {quizStarted && (
             <>
               {/* Score */}
-              <div className="text-center text-[#FFF6D9] mb-4 animate-fade-in">
-                <span className="inline-block">Your Score: </span>
-                <span key={score} className="inline-block font-bold text-xl animate-score-bounce">{score}</span>
-              </div>
-
-              {/* Question Progress Indicators */}
-              <div className="relative mb-4">
-                {/* Left Arrow Button */}
-                <button
-                  onClick={() => {
-                    if (questionScrollRef.current) {
-                      questionScrollRef.current.scrollBy({ left: -200, behavior: 'smooth' });
-                    }
-                  }}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-[#0D0009] hover:bg-[#0D0009]/80 rounded-full p-2 shadow-lg transition-colors border border-[#FFF6D9]/30"
-                  aria-label="Scroll left"
-                >
-                  <svg className="w-5 h-5 text-[#FFF6D9]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-
-                {/* Scrollable Question Indicators */}
-                <div
-                  ref={questionScrollRef}
-                  className="overflow-x-auto scroll-smooth hide-scrollbar"
-                  style={{
-                    scrollbarWidth: 'none',
-                    msOverflowStyle: 'none',
-                    WebkitOverflowScrolling: 'touch'
-                  }}
-                >
-                  <div className="flex flex-nowrap gap-2 justify-start min-w-max px-8">
-                    {Array.from({ length: contest.contest_question_count || contest.questions.length }, (_, index) => {
-                      const answer = answers[index];
-                      let bgColor = 'bg-gray-500';
-                      if (index === currentQuestionIndex && !answer) {
-                        bgColor = 'bg-yellow-500';
-                      } else if (answer) {
-                        bgColor = answer.isCorrect ? 'bg-green-500' : 'bg-red-500';
-                      }
-
-                      return (
-                        <div
-                          key={index}
-                          className={`w-8 h-8 rounded-full ${bgColor} flex items-center justify-center text-white text-xs font-bold flex-shrink-0 transition-all duration-300 ${index === currentQuestionIndex && !answer ? 'animate-question-indicator-pulse' : ''
-                            }`}
-                        >
-                          Q{index + 1}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Right Arrow Button */}
-                <button
-                  onClick={() => {
-                    if (questionScrollRef.current) {
-                      questionScrollRef.current.scrollBy({ left: 200, behavior: 'smooth' });
-                    }
-                  }}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-[#0D0009] hover:bg-[#0D0009]/80 rounded-full p-2 shadow-lg transition-colors border border-[#FFF6D9]/30"
-                  aria-label="Scroll right"
-                >
-                  <svg className="w-5 h-5 text-[#FFF6D9]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
+              <div className="text-center font-semibold text-[#FFB540] mt-4 mb-4 animate-fade-in">
+                <span className="inline-block">Your Score is {score}</span>
               </div>
             </>
           )}
+        </div>
+        <div>
+          <div className="w-full overflow-hidden ">
+            <AdsenseAd adSlot="8153775072" adFormat="auto" />
+          </div>
+          <p className="text-center text-[#414d65] text-xs mt-2 mb-2 font-medium">A D V E R T I S E M E N T</p>
         </div>
       </div>
       {/* <Footer /> */}
@@ -1698,8 +1413,6 @@ export default function ContestPlayPage() {
           </div>
         </div>
       )}
-
-      <Footer />
     </>
   );
 }
