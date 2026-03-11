@@ -62,11 +62,9 @@ export default function RootLayout({
         <LarapushScript />
         <GlobalRipple />
 
-        <SplashPreloader>
           <main className="mobile-container">
             {children}
           </main>
-        </SplashPreloader>
       </body>
     </html>
   );

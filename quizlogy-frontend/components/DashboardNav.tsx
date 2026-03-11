@@ -17,7 +17,7 @@ export const DashboardNav = () => {
   useEffect(() => {
     checkAuth();
     updateGuestCoins();
-    
+
     // Listen for storage changes (for guest coins and user updates)
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'guestCoins') {
@@ -27,7 +27,7 @@ export const DashboardNav = () => {
         checkAuth();
       }
     };
-    
+
     // Listen for custom events (triggered when coins are updated)
     const handleCoinsUpdate = () => {
       // Update immediately from localStorage first (instant update)
@@ -41,7 +41,7 @@ export const DashboardNav = () => {
         }
       }
       updateGuestCoins();
-      
+
       // Then fetch fresh data from API in background (for sync)
       (async () => {
         try {
@@ -56,10 +56,10 @@ export const DashboardNav = () => {
         }
       })();
     };
-    
+
     window.addEventListener('storage', handleStorageChange);
     window.addEventListener('coinsUpdated', handleCoinsUpdate);
-    
+
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('coinsUpdated', handleCoinsUpdate);
@@ -78,7 +78,7 @@ export const DashboardNav = () => {
       if (storedUser) {
         const parsedUser = JSON.parse(storedUser);
         setUser(parsedUser);
-        
+
         // Always fetch fresh data from API to get updated coins
         // This ensures coins are always in sync with the database
         try {
@@ -110,40 +110,40 @@ export const DashboardNav = () => {
 
   return (
     <>
-      <Sidebar 
-        isOpen={sidebarOpen} 
+      <Sidebar
+        isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
         onReportIssueClick={() => setReportIssueModalOpen(true)}
       />
-      <ReportIssueModal 
-        isOpen={reportIssueModalOpen} 
+      <ReportIssueModal
+        isOpen={reportIssueModalOpen}
         onClose={() => setReportIssueModalOpen(false)}
       />
-      
-<div className="w-full bg-[#172031] relative">
-  <div className="flex items-center justify-between px-4 py-3 w-full">
-    
-    {/* Left Side: Sidebar Button */}
-    <div className="flex items-center flex-shrink-0 z-10">
-      <button 
-        onClick={() => setSidebarOpen(true)}
-        className="flex flex-col gap-1.5 cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0 text-white"
-      ><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24"  height="2em" width="2em" xmlns="http://www.w3.org/2000/svg"><path d="M21 17.9995V19.9995H3V17.9995H21ZM17.4038 3.90332L22 8.49951L17.4038 13.0957L15.9896 11.6815L19.1716 8.49951L15.9896 5.31753L17.4038 3.90332ZM12 10.9995V12.9995H3V10.9995H12ZM12 3.99951V5.99951H3V3.99951H12Z"></path></svg>
-      </button>
-    </div>
 
-    {/* Center: Quizwinz */}
-    <div className="absolute left-1/2 -translate-x-1/2 text-3xl font-bold text-[#ffb540]" style={{fontFamily: 'monospace'}}>
-      Quizwinz
-    </div>
+      <div className="w-full bg-[#172031] relative">
+        <div className="flex items-center justify-between px-4 py-3 w-full">
 
-    {/* Right Side: Coins */}
-    <div className="flex items-center gap-1 border-2 border-yellow-400 px-3 py-1 rounded-full text-yellow-400 text-sm font-semibold z-10">
-      🪙 {guestCoins.toLocaleString()}
-    </div>
-    
-  </div>
-</div>
+          {/* Left Side: Sidebar Button */}
+          <div className="flex items-center flex-shrink-0 z-10">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="flex flex-col gap-1.5 cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0 text-white"
+            ><svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" height="2em" width="2em" xmlns="http://www.w3.org/2000/svg"><path d="M21 17.9995V19.9995H3V17.9995H21ZM17.4038 3.90332L22 8.49951L17.4038 13.0957L15.9896 11.6815L19.1716 8.49951L15.9896 5.31753L17.4038 3.90332ZM12 10.9995V12.9995H3V10.9995H12ZM12 3.99951V5.99951H3V3.99951H12Z"></path></svg>
+            </button>
+          </div>
+
+          {/* Center: Quizwinz */}
+          <div className="absolute left-1/2 -translate-x-1/2 text-3xl font-bold text-[#ffb540]" style={{ fontFamily: 'monospace' }}>
+            Quizwinz
+          </div>
+
+          {/* Right Side: Coins */}
+          <div className="flex items-center gap-1 border-2 border-yellow-400 px-3 py-1 rounded-full text-yellow-400 text-sm font-semibold z-10">
+            🪙 {guestCoins.toLocaleString()}
+          </div>
+
+        </div>
+      </div>
     </>
   );
 };

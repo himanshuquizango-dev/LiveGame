@@ -422,12 +422,7 @@ export default function CoinHistoryPage() {
           )}
 
           {/* Advertisement Section */}
-          <div className="mt-6">
-            <div className="w-full overflow-hidden bg-[#0a0e14]">
-              <AdsenseAd adSlot="8153775072" adFormat="auto" />
-            <p className="text-center  text-white text-xs pt-2 mb-2 font-medium">ADVERTISEMENT</p>
-            </div>
-          </div>
+
         </div>
       </div>
     </>
